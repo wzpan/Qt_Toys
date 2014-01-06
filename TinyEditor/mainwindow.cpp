@@ -23,6 +23,12 @@ MainWindow::~MainWindow()
     delete ui;
 }
 
+
+/** 
+ * updateEnable	-	Update the enable variable of the edit menu
+ *
+ * @param vi	-	the enable variable
+ */
 void MainWindow::updateEnable(bool vi)
 {
     for (int i = 0; i < ui->menuEdit->actions().count(); ++i){
@@ -31,11 +37,10 @@ void MainWindow::updateEnable(bool vi)
 }
 
 
-//----------------------
-// File functions
-//----------------------
-
-// Do a file save check before close the application
+/** 
+ * closeEvent	-	Do a file save check before close the application
+ *
+ */
 void MainWindow::closeEvent(QCloseEvent *event)
 {
     if (maybeSave()) {
@@ -46,6 +51,11 @@ void MainWindow::closeEvent(QCloseEvent *event)
 }
 
 
+/** 
+ * maybeSave	-	some thing to do before the next operation
+ *
+ * @return true if all preparation has done; false if the user cancel the operation.
+ */
 bool MainWindow::maybeSave()
 {
     // if current file has been changed
@@ -72,6 +82,11 @@ bool MainWindow::maybeSave()
     return true;
 }
 
+
+/** 
+ * newFile	-	Create a new file and name it as "Untitled.txt"
+ *
+ */
 void MainWindow::newFile()
 {
     if (maybeSave()) {
@@ -84,6 +99,11 @@ void MainWindow::newFile()
     }
 }
 
+/** 
+ * save	-	Save the file
+ *
+ * @return true if the file is successfully saved
+ */
 bool MainWindow::save()
 {
     if (isUntitled) {
@@ -94,6 +114,13 @@ bool MainWindow::save()
 }
 
 
+/** 
+ * saveAs	-	Save the file as...
+ *
+ *
+ * @return true if the file is successfully saved to the
+ * 			user defined location
+ */
 bool MainWindow::saveAs()
 {
     QString fileName = QFileDialog::getSaveFileName(this,
@@ -105,6 +132,13 @@ bool MainWindow::saveAs()
 }
 
 
+/** 
+ * saveFile	-	Save the file to a specified location
+ *
+ * @param fileName	-	the target location
+ *
+ * @return true if the file is successfully saved
+ */
 bool MainWindow::saveFile(const QString &fileName)
 {
     QFile file(fileName);
@@ -132,6 +166,14 @@ bool MainWindow::saveFile(const QString &fileName)
     return true;
 }
 
+
+/** 
+ * loadFile	-	Open and load a specified file
+ *
+ * @param fileName	-	file location
+ *
+ * @return true if the file is successfully loaded
+ */
 bool MainWindow::loadFile(const QString &fileName)
 {
     QFile file(fileName);
@@ -157,6 +199,49 @@ bool MainWindow::loadFile(const QString &fileName)
     return true;
 }
 
+
+/** 
+ * find	-	Find a string in the textEdit component
+ *
+ * @param str	-	the target string
+ * @param flag	-	find flags
+ */
+void MainWindow::find(const QString &str, QTextDocument::FindFlags flag)
+{
+    if(!ui->textEdit->find(str, flag)){
+        QMessageBox::warning(this, tr("Find"), tr("Cannot find %1").arg(str));
+    }
+}
+
+void MainWindow::on_actionFind_triggered()
+{
+    if (!findDialog) {
+        findDialog = new FindDialog(this);
+        // connect the findDialog's "find" signal to main window's "find" slot
+        connect(findDialog, SIGNAL(find(const QString & , QTextDocument::FindFlags)),
+                this, SLOT(find(const QString &, QTextDocument::FindFlags))
+                );
+    }
+
+    findDialog->show();
+    findDialog->raise();
+    findDialog->activateWindow();
+}
+
+/** 
+ * about	-	Display about information
+ *
+ */
+void MainWindow::about()
+{
+    QMessageBox::about(this, tr("About Tiny Editor"),
+                       tr("<h2>Tiny Editor 1.1</h2>"
+                          "<p>Copyright &copy; 2013 Software Inc.</p>"
+                          "<p>Tiny Editor is a small application that "
+                          "allows you to edit text.</p>"));
+}
+
+
 // New file operation
 void MainWindow::on_actionNew_triggered()
 {
@@ -177,19 +262,19 @@ void MainWindow::on_actionOpen_triggered()
     }
 }
 
-// Save file operation
+// Save operation
 void MainWindow::on_actionSave_triggered()
 {
     save();
 }
 
-// Save as operation
+// Save As operation
 void MainWindow::on_actionSave_As_triggered()
 {
     saveAs();
 }
 
-// Close file operation
+// Close operation
 void MainWindow::on_actionClose_triggered()
 {
     if (maybeSave()) {
@@ -207,22 +292,19 @@ void MainWindow::on_actionQuit_triggered()
     qApp->quit();
 }
 
-//-------------------
-// Edit functions
-//-------------------
-
 // Cancel operation
 void MainWindow::on_actionCancel_triggered()
 {
     ui->textEdit->undo();
 }
 
-
+// Redo operation
 void MainWindow::on_actionRedo_triggered()
 {
     ui->textEdit->redo();
 }
 
+// Select all operation
 void MainWindow::on_actionSelect_All_triggered()
 {
     ui->textEdit->selectAll();
@@ -233,7 +315,6 @@ void MainWindow::on_actionCut_triggered()
 {
     ui->textEdit->cut();
 }
-
 
 // Copy operation
 void MainWindow::on_actionCopy_triggered()
@@ -247,47 +328,13 @@ void MainWindow::on_actionPaste_triggered()
     ui->textEdit->paste();
 }
 
-void MainWindow::find(const QString &str, QTextDocument::FindFlags flag)
-{
-    if(!ui->textEdit->find(str, flag)){
-        QMessageBox::warning(this, tr("Find"), tr("Cannot find %1").arg(str));
-    }
-}
-
-// Find operation
-void MainWindow::on_actionFind_triggered()
-{
-    if (!findDialog) {
-        findDialog = new FindDialog(this);
-        // connect the findDialog's "find" signal to main window's "find" slot
-        connect(findDialog, SIGNAL(find(const QString & , QTextDocument::FindFlags)),
-                this, SLOT(find(const QString &, QTextDocument::FindFlags))
-                );
-    }
-
-    findDialog->show();
-    findDialog->raise();
-    findDialog->activateWindow();
-}
-
-//-------------------
-// Help functions
-//-------------------
-
-void MainWindow::about()
-{
-    QMessageBox::about(this, tr("About Tiny Editor"),
-                       tr("<h2>Tiny Editor 1.1</h2>"
-                          "<p>Copyright &copy; 2013 Software Inc.</p>"
-                          "<p>Tiny Editor is a small application that "
-                          "allows you to edit text.</p>"));
-}
-
+// About operation
 void MainWindow::on_actionAbout_Qt_triggered()
 {
     qApp->aboutQt();
 }
 
+// About Qt operation
 void MainWindow::on_actionAbout_triggered()
 {
     about();

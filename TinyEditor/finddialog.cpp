@@ -14,7 +14,7 @@ FindDialog::~FindDialog()
     delete ui;
 }
 
-void FindDialog::findClicked()
+void FindDialog::on_findButton_clicked()
 {
     QString text = ui->lineEdit->text();
     QTextDocument::FindFlags flag = 0;
@@ -29,12 +29,6 @@ void FindDialog::findClicked()
 
     // emit the "find" signal
     emit find(text, flag);
-}
-
-
-void FindDialog::on_findButton_clicked()
-{
-    findClicked();
 }
 
 void FindDialog::on_closeButton_clicked()

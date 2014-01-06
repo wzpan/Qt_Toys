@@ -21,7 +21,6 @@ signals:
     void find(const QString &str, QTextDocument::FindFlags flag);
 
 private slots:
-    void findClicked();
     void on_findButton_clicked();
     void on_closeButton_clicked();
     void on_lineEdit_textChanged(const QString &text);
