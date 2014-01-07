@@ -10,8 +10,6 @@ set(CMAKE_AUTOMOC ON)
 # Widgets finds its own dependencies (QtGui and QtCore).
 find_package(Qt5Widgets REQUIRED)
 
-aux_source_directory(. DIR_SRCS)
-
 # Set and add resource file
 set(Resource ${CMAKE_SOURCE_DIR}/myResources.qrc)
 qt5_add_resources(ResourceSources ${Resource})

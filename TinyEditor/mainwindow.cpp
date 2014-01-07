@@ -11,11 +11,16 @@ MainWindow::MainWindow(QWidget *parent) :
     isUntitled = true;
     curFile = tr("untitled.txt");
     setWindowTitle(curFile);
-    //ui->textEdit->setVisible(true);
-    //updateEnable(true);
 
     // Impletement a find dialog
     findDialog = 0;
+
+    // Set timer by 1 sec
+    timer = startTimer(1000);
+
+    // Status bar
+    timeLabel = new QLabel;
+    ui->statusBar->addPermanentWidget(timeLabel);
 }
 
 MainWindow::~MainWindow()
@@ -25,7 +30,7 @@ MainWindow::~MainWindow()
 
 
 /** 
- * updateEnable	-	Update the enable variable of the edit menu
+ * updateEnable	-	Update the enable property of the edit menu
  *
  * @param vi	-	the enable variable
  */
@@ -48,6 +53,16 @@ void MainWindow::closeEvent(QCloseEvent *event)
     } else {
         event->ignore();
     }
+}
+
+
+/**
+ * timerEvent	-	Update the time label
+ *
+ */
+void MainWindow::timerEvent(QTimerEvent *)
+{
+    timeLabel->setText(QDateTime::currentDateTime().toString("yyyy-MM-dd hh:mm::ss"));
 }
 
 

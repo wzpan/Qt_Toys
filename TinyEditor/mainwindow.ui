@@ -14,8 +14,8 @@
    <string>MainWindow</string>
   </property>
   <property name="windowIcon">
-   <iconset>
-    <normaloff>:/myImage/actions/gtk-edit.png</normaloff>:/myImage/actions/gtk-edit.png</iconset>
+   <iconset resource="myResources.qrc">
+    <normaloff>:/myImages/actions/gtk-edit.png</normaloff>:/myImages/actions/gtk-edit.png</iconset>
   </property>
   <widget class="QWidget" name="centralWidget">
    <layout class="QGridLayout" name="gridLayout">
@@ -100,6 +100,9 @@
    <property name="text">
     <string>New(&amp;N)</string>
    </property>
+   <property name="statusTip">
+    <string>Create a new file.</string>
+   </property>
    <property name="shortcut">
     <string>Ctrl+N</string>
    </property>
@@ -111,6 +114,9 @@
    </property>
    <property name="text">
     <string>Open(&amp;O)</string>
+   </property>
+   <property name="statusTip">
+    <string>Open an existing file.</string>
    </property>
    <property name="shortcut">
     <string>Ctrl+O</string>
@@ -124,6 +130,9 @@
    <property name="text">
     <string>Save(&amp;S)</string>
    </property>
+   <property name="statusTip">
+    <string>Save file.</string>
+   </property>
    <property name="shortcut">
     <string>Ctrl+S</string>
    </property>
@@ -135,6 +144,9 @@
    </property>
    <property name="text">
     <string>Save As</string>
+   </property>
+   <property name="statusTip">
+    <string>Save file to a user-defined location.</string>
    </property>
    <property name="shortcut">
     <string>Ctrl+Shift+S</string>
@@ -148,6 +160,9 @@
    <property name="text">
     <string>Quit(&amp;Q)</string>
    </property>
+   <property name="statusTip">
+    <string>Quit TinyEditor.</string>
+   </property>
    <property name="shortcut">
     <string>Ctrl+Q</string>
    </property>
@@ -159,6 +174,9 @@
    </property>
    <property name="text">
     <string>Find(&amp;F)</string>
+   </property>
+   <property name="statusTip">
+    <string>Find a text string from the current file.</string>
    </property>
    <property name="shortcut">
     <string>Ctrl+F</string>
@@ -172,6 +190,9 @@
    <property name="text">
     <string>Close(&amp;C)</string>
    </property>
+   <property name="statusTip">
+    <string>Close the current file.</string>
+   </property>
    <property name="shortcut">
     <string>Ctrl+W</string>
    </property>
@@ -183,6 +204,9 @@
    </property>
    <property name="text">
     <string>Undo(&amp;Z)</string>
+   </property>
+   <property name="statusTip">
+    <string>Undo the last operation.</string>
    </property>
    <property name="shortcut">
     <string>Ctrl+Z</string>
@@ -196,6 +220,9 @@
    <property name="text">
     <string>Cut(&amp;X)</string>
    </property>
+   <property name="statusTip">
+    <string>Cut the region to the clipboard.</string>
+   </property>
    <property name="shortcut">
     <string>Ctrl+X</string>
    </property>
@@ -207,6 +234,9 @@
    </property>
    <property name="text">
     <string>Copy(&amp;C)</string>
+   </property>
+   <property name="statusTip">
+    <string>Copy the region to the clipboard.</string>
    </property>
    <property name="shortcut">
     <string>Ctrl+C</string>
@@ -220,6 +250,9 @@
    <property name="text">
     <string>Paste(&amp;V)</string>
    </property>
+   <property name="statusTip">
+    <string>Paste from clipboard.</string>
+   </property>
    <property name="shortcut">
     <string>Ctrl+V</string>
    </property>
@@ -231,6 +264,9 @@
    </property>
    <property name="text">
     <string>About(&amp;A)</string>
+   </property>
+   <property name="statusTip">
+    <string>About TinyEditor.</string>
    </property>
    <property name="shortcut">
     <string>F1</string>
@@ -244,6 +280,9 @@
    <property name="text">
     <string>About Qt(&amp;Q)</string>
    </property>
+   <property name="statusTip">
+    <string>About Qt.</string>
+   </property>
   </action>
   <action name="actionSelect_All">
    <property name="icon">
@@ -252,6 +291,9 @@
    </property>
    <property name="text">
     <string>Select &amp;All(&amp;A)</string>
+   </property>
+   <property name="statusTip">
+    <string>Select the whole file.</string>
    </property>
    <property name="shortcut">
     <string>Ctrl+A</string>
@@ -264,6 +306,9 @@
    </property>
    <property name="text">
     <string>Redo(&amp;R)</string>
+   </property>
+   <property name="statusTip">
+    <string>Redo the operation.</string>
    </property>
    <property name="shortcut">
     <string>Ctrl+R</string>
