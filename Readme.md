@@ -13,4 +13,4 @@ Some toy exemplars for rapidly start-up Qt projects.
 Currently including:
 
 * TinyEditor	-	A tiny text editor;
-* ImageViewer	-	A image viewer, with opencv-based filters.
+* ImageViewer	-	An image viewer, with opencv-based filters.
