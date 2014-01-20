@@ -35,7 +35,7 @@ MainWindow::~MainWindow()
 
 
 /** 
- * updateEnable	-	Update the enable property of the edit menu
+ * updateStatus	-	Update the enable property of the edit menu
  *
  * @param vi	-	the enable variable
  */
@@ -132,22 +132,23 @@ bool MainWindow::saveAs()
 
 
 /** 
- * saveFile	-	Save the file to a specified location
+ * saveImage	-	Save the file to a specified location
  *
  * @param fileName	-	the target location
  *
  * @return true if the file is successfully saved
  */
-bool MainWindow::saveImage(QString &fileName)
+bool MainWindow::saveImage(const QString &fileName)
 {
+    QString target;
     if (QFileInfo(fileName).suffix() == "")
-        fileName.append(".png");
-    QFile file(fileName);
+        target = fileName + ".png";
+    QFile file(target);
 
     if (!file.open(QFile::WriteOnly)) {
         QMessageBox::warning(this, tr("ImageViewer"),
                              tr("Enable to save %1: \n %2")
-                             .arg(fileName).arg(file.errorString()));
+                             .arg(target).arg(file.errorString()));
         return false;
     }
 
@@ -155,13 +156,13 @@ bool MainWindow::saveImage(QString &fileName)
     QApplication::setOverrideCursor(Qt::WaitCursor);
     
     // save all the contents to file
-    imwrite(fileName.toStdString(), src);
+    imwrite(target.toStdString(), src);
         
     // restore the cursor
     QApplication::restoreOverrideCursor();
 
     // get the file's standard location
-    curFile = QFileInfo(fileName).canonicalPath();
+    curFile = QFileInfo(target).canonicalPath();
     setWindowTitle(curFile);
 
     isModified = false;
@@ -171,13 +172,13 @@ bool MainWindow::saveImage(QString &fileName)
 
 
 /** 
- * loadFile	-	Open and load a specified file
+ * loadImage	-	Open and load a specified file
  *
  * @param fileName	-	file location
  *
  * @return true if the file is successfully loaded
  */
-bool MainWindow::loadImage(QString &fileName)
+bool MainWindow::loadImage(const QString &fileName)
 {
     QFile file(fileName);
     if (!file.open(QFile::ReadOnly)) {

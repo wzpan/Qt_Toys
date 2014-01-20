@@ -8,15 +8,17 @@
 #include <QPushButton>
 #include <QMessageBox>
 #include <QLabel>
+#include "adjustdialog.h"
+
 #include <opencv2/core/core.hpp>
 #include <opencv2/highgui/highgui.hpp>
 #include <opencv2/imgproc/imgproc.hpp>
 
-using namespace cv;
-
 namespace Ui {
-class MainWindow;
+    class MainWindow;
 }
+
+using namespace cv;
 
 class MainWindow : public QMainWindow
 {
@@ -26,7 +28,7 @@ public:
     explicit MainWindow(QWidget *parent = 0);
     ~MainWindow();
 
-    void updateStates(bool vi);   // Update objects' visibility
+    void updateStatus(bool vi);   // Update objects' visibility
 
     // File functions
 	bool maybeSave();   // whether needs save
@@ -34,9 +36,11 @@ public:
     bool saveAs();      // save as
     bool saveImage(const QString &fileName);     // save file
     bool loadImage(const QString &fileName);    // load file
+    void showImage(Mat img);        // display image on label control
 
-    void Erosion( int, void* );
-    void Dilation( int, void* );
+    void erosion();
+    void dilation();
+    void adjust();
 
     // Help functions
     void about();
@@ -53,6 +57,12 @@ private slots:
 
     void on_actionSave_triggered();
 
+    void on_actionAbout_triggered();
+    void on_actionAbout_Qt_triggered();
+    void on_actionAdjust_triggered();
+    void reset();
+    void preview();
+
 protected:
     void closeEvent(QCloseEvent *event);    // Close event
     void timerEvent(QTimerEvent *);         // Timer event
@@ -63,7 +73,15 @@ private:
     QString emptyTip;   // tips when no image is opened
     bool isModified;   // whether the file has been modified
     QString curFile;	// current file's location
-    Mat image;			// the image variable
+    cv::Mat image, src, temp;			// the image variable
+
+    int type;       // adjust type. 0: erosion; 1: dilation
+    int elem;       // element type. 0: rect; 1. cross; 2. ellipse
+    int size;       // kernel size
+
+    // adjust dialog
+    AdjustDialog *adjustDialog;
+
     int timer;			// timer
     QLabel *timeLabel;	// time label
 };
