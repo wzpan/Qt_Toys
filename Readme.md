@@ -6,7 +6,7 @@ Some toy exemplars for rapidly start-up Qt projects.
 ## Dependencies ##
 
 * Qt (>= 5.0);
-* OpenCV (>= 2.0)	-	Needed on some video/image related applications
+* OpenCV (>= 2.0)	-	Needed by some video/image related applications.
 
 ## Toy exemplars ##
 
