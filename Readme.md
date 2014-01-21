@@ -10,16 +10,20 @@ Some toy exemplars for rapidly start-up Qt projects.
 
 ## Toy exemplars ##
 
-Currently including:
+### TinyEditor ###
 
-* TinyEditor	-	A tiny text editor
+A tiny text editor
 
 ![](https://raw2.github.com/wzpan/Qt_Toys/master/Screenshots/TinyEditor.png)
 
-* ImageViewer	-	An image viewer, with opencv-based filters
+### ImageViewer ###
+
+An image viewer, with opencv-based filters
 
 ![](https://raw2.github.com/wzpan/Qt_Toys/master/Screenshots/ImageViewer.png)
 
-* VideoPlayer	-	A video player, with opencv-based filters([screenshot]()).
+### VideoPlayer ###
+
+A video player, with opencv-based filters
 
 ![](https://raw2.github.com/wzpan/Qt_Toys/master/Screenshots/VideoPlayer.png)
