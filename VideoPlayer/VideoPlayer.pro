@@ -12,9 +12,16 @@ TARGET = excutable
 TEMPLATE = app
 
 SOURCES += main.cpp\
-        mainwindow.cpp
+        mainwindow.cpp \
+    VideoProcessor.cpp \
+    ErosionProcessor.cpp \
+    WindowHelper.cpp
 
-HEADERS  += mainwindow.h
+HEADERS  += mainwindow.h \
+    ErosionProcessor.h \
+    FrameProcessor.h \
+    VideoProcessor.h \
+    WindowHelper.h
 
 FORMS    += mainwindow.ui
 

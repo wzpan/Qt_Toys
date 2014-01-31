@@ -8,11 +8,16 @@
 #include <QPushButton>
 #include <QMessageBox>
 #include <QLabel>
+#include <queue>
+#include <dbg.h>
+#include "VideoProcessor.h"
+#include "ErosionProcessor.h"
+#include "WindowHelper.h"
 #include <opencv2/core/core.hpp>
-#include <opencv2/highgui/highgui.hpp>
 #include <opencv2/imgproc/imgproc.hpp>
+#include <opencv2/highgui/highgui.hpp>
 
-using namespace cv;
+class VideoProcessor;
 
 namespace Ui {
 class MainWindow;
@@ -24,32 +29,15 @@ class MainWindow : public QMainWindow
 
 public:
     explicit MainWindow(QWidget *parent = 0);
-    ~MainWindow();
-
-    void updateStatus(bool vi);   // Update objects' ability
-    void updateBtn();             // Update button's visibility
+    ~MainWindow();    
 
     // File functions
 	bool maybeSave();   // whether needs save
     bool save();        // save
+    void play();        // save
     bool saveAs();      // save as
     bool saveFile(const QString &fileName);     // save file
     bool LoadFile(const QString &fileName);    // load file
-    void showImage(Mat img);        // display image on label control
-
-    // Play functions
-    void play();        // play video
-    void pause();       // pause playing
-    bool revert();      // revert progress
-    void stop();        // stop playing
-    void jumpTo (long pos);   // jump to a position
-    void preFrame();   // pause and display previous frame
-    void nextFrame();   // pause and display next frame
-
-    // Process Video
-    void process();
-
-    void sleep(int msecs);
 
     // Help functions
     void about();
@@ -63,8 +51,6 @@ private slots:
     void on_actionClose_triggered();
 
     void on_actionSave_as_triggered();
-
-    void on_actionSave_triggered();
 
     void on_actionAbout_triggered();
 
@@ -84,37 +70,45 @@ private slots:
 
     void on_btnNext_clicked();
 
-    void on_progressSlider_valueChanged(int value);
+    void on_btnLast_clicked();  
 
-    void on_btnLast_clicked();
+    void showFrame(cv::Mat frame);    
 
-    void on_actionProcess_triggered();
+    void on_action_Erosion_triggered();
+
+    void revert();
+
+    void sleep(int msecs);
+
+    void updateBtn();
+
+    void updateProgressBar();
+
+    void on_progressSlider_sliderMoved(int position);
 
 protected:
-    void closeEvent(QCloseEvent *event);    // Close event
+    void closeEvent(QCloseEvent *);
     
 private:
-    Ui::MainWindow *ui;
-    QString emptyTip;   // tips when no image is opened
+    Ui::MainWindow *ui;    
 
-    bool isModified;   // whether the file has been modified
-    bool isPlay;        // whether is playing
+    void updateStatus(bool vi);
 
-    QLabel *rateLabel;     // frame label
+    // tips when no image is opened
+    QString inputTip;
+    QString outputTip;
 
-    QString curFile;        // current file's location
+    // frame label
+    QLabel *rateLabel;
+    // current file's location
+    QString curFile;
 
-    QIcon iconPlay;
-    QIcon iconPause;
+    // video processor instance
+    VideoProcessor *video;
 
-    VideoCapture capture;   // video sequence
-    Mat frame;              // current video frame
-    double rate;            // video frame rate
-    int delay;              // delay between each frame in ms
-    long length;          // length of the video
-    long curPos;           // the current progress
-    QDateTime wholeTime;      // the whole lasting time of the video
-    QDateTime curTime;         // the current time
+    WindowHelper *helper;
+
+    void clean();
 };
 
 #endif // MAINWINDOW_H
