@@ -22,7 +22,7 @@ public:
 
     explicit VideoProcessor(QObject *parent = 0);
 
-    // Is the player stopped?
+    // Is the player playing?
     bool isPlay();
 
     // Is the video modified?
@@ -33,12 +33,6 @@ public:
 
     // stop streaming at this frame number
     void stopAtFrameNo(long frame);
-
-    // process callback to be called
-    void callProcess();
-
-    // do not call process callback
-    void dontCallProcess();
 
     // set a delay between each frame
     // 0 means wait at each frame
@@ -66,19 +60,14 @@ public:
     // return the number of frames in video
     long getLength();
 
-    // recaculate the number of frames in video
-    // normally doesn't need it unless getLength()
-    // can't return a valid value
-    long caculateLength();
-
     // get the codec of input video
     int getCodec(char codec[4]);
 
     // get temp file lists
     void getTempFile(std::string &);
 
-    // go to this position
-    bool setPositionMS(double pos);
+    // get current temp file
+    void getCurTempFile(std::string &);
 
     // go to this position expressed in fraction of total film length
     bool setRelativePosition(double pos);
@@ -103,16 +92,13 @@ public:
     // set the instance of the class that implements the FrameProcessor interface
     void setFrameProcessor(FrameProcessor* frameProcessorPtr);
 
-    // go to this frame number
-    bool setFrameNumber(long pos);
-
     // play the frames of the sequence
     void playIt();
 
     // pause the frames of the sequence
     void pauseIt();
 
-    // Stop the processing
+    // Stop playing
     void stopIt();
 
     // display the prev frame of the sequence
@@ -122,12 +108,18 @@ public:
     void nextFrame();
 
     // Jump to a position
-    void jumpTo(long index);
+    bool jumpTo(long index);
+
+    // go to this position
+    bool jumpToMS(double pos);
+
+    // close the video
+    void close();
 
     // process the frames of the sequence
     void runProcess();
 
-    // write the output
+    // write the processed result
     void writeOutput();
 
 private slots:
@@ -152,9 +144,6 @@ private:
     // the pointer to the class implementing
     // the FrameProcessor interface
     FrameProcessor *frameProcessor;
-    // a bool to determine if the
-    // process callback will be called
-    bool callIt;
     // delay between each frame processing
     int delay;
     // number of processed frames
@@ -167,6 +156,8 @@ private:
     bool play;
     // is the video modified
     bool modify;
+    // the current playing pos
+    long curPos;
 
     // the OpenCV video writer object
     cv::VideoWriter writer;
@@ -193,8 +184,13 @@ private:
     void writeNextFrame(cv::Mat& frame);
 
     // set the temp video file
-    // by default the same parameters than input video will be used
-    bool setTemp(int codec=0, double framerate=0.0, bool isColor=true);
+    // by default the same parameters to the input video
+    bool createTemp(int codec=0, double framerate=0.0, bool isColor=true);
+
+    // recalculate the number of frames in video
+    // normally doesn't need it unless getLength()
+    // can't return a valid value
+    void calculateLength();
 
 };
 

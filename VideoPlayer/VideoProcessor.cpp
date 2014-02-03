@@ -2,7 +2,6 @@
 
 VideoProcessor::VideoProcessor(QObject *parent) : QObject(parent)
 {
-    callIt = false;
     delay = -1;
     fnumber = 0;
     play = false;
@@ -12,40 +11,62 @@ VideoProcessor::VideoProcessor(QObject *parent) : QObject(parent)
     frameProcessor = 0;
     modify = false;
     length = 0;
+    curPos = 0;
 
     connect(this, SIGNAL(revert()), this, SLOT(revertVideo()));
 }
 
+
+/** 
+ * stopAtFrameNo	-	stop streaming at this frame number
+ *
+ * @param frame	-	frame number to stop
+ */
 void VideoProcessor::stopAtFrameNo(long frame)
 {
     frameToStop = frame;
 }
 
-void VideoProcessor::callProcess()
-{
-    callIt = true;
-}
 
-void VideoProcessor::dontCallProcess()
-{
-    callIt = false;
-}
-
+/** 
+ * setDelay	-	 set a delay between each frame
+ *
+ * 0 means wait at each frame, 
+ * negative means no delay
+ * @param d	-	delay param
+ */
 void VideoProcessor::setDelay(int d)
 {
     delay = d;
 }
 
+/** 
+ * getNumberOfProcessedFrames	-	a count is kept of the processed frames
+ *
+ *
+ * @return the number of processed frames
+ */
 long VideoProcessor::getNumberOfProcessedFrames()
 {
     return fnumber;
 }
 
+/** 
+ * getNumberOfPlayedFrames	-	get the current playing progress
+ *
+ * @return the number of played frames
+ */
 long VideoProcessor::getNumberOfPlayedFrames()
 {
-    return capture.get(CV_CAP_PROP_POS_FRAMES);
+    return curPos;
 }
 
+/** 
+ * getFrameSize	-	return the size of the video frame
+ *
+ *
+ * @return the size of the video frame
+ */
 cv::Size VideoProcessor::getFrameSize()
 {
     int w = static_cast<int>(capture.get(CV_CAP_PROP_FRAME_WIDTH));
@@ -54,6 +75,12 @@ cv::Size VideoProcessor::getFrameSize()
     return cv::Size(w,h);
 }
 
+/** 
+ * getFrameNumber	-	return the frame number of the next frame
+ *
+ *
+ * @return the frame number of the next frame
+ */
 long VideoProcessor::getFrameNumber()
 {
     long f = static_cast<long>(capture.get(CV_CAP_PROP_POS_FRAMES));
@@ -61,6 +88,11 @@ long VideoProcessor::getFrameNumber()
     return f;
 }
 
+/** 
+ * getPositionMS	-	return the position in ms
+ *
+ * @return the position in ms
+ */
 double VideoProcessor::getPositionMS()
 {
     double t = capture.get(CV_CAP_PROP_POS_MSEC);
@@ -68,6 +100,12 @@ double VideoProcessor::getPositionMS()
     return t;
 }
 
+/** 
+ * getFrameRate	-	return the frame rate
+ *
+ *
+ * @return the frame rate
+ */
 double VideoProcessor::getFrameRate()
 {
     double r = capture.get(CV_CAP_PROP_FPS);
@@ -75,25 +113,43 @@ double VideoProcessor::getFrameRate()
     return r;
 }
 
+/** 
+ * getLength	-	the number of frames in video
+ *
+ * @return the number of frames
+ */
 long VideoProcessor::getLength()
 {
     if (length <= 0)
-        return caculateLength();
-    else return length;
+        calculateLength();
+    return length;
 }
 
-long VideoProcessor::caculateLength()
+/** 
+ * calculateLength	-	recalculate the number of frames in video
+ * 
+ * normally doesn't need it unless getLength()
+ * can't return a valid value
+ */
+void VideoProcessor::calculateLength()
 {
-    long l;
+    long l = 0;
     cv::Mat img;
-    cv::VideoCapture lengthCapture;
-    lengthCapture.open(tempFile);
-    while(!lengthCapture.read(img)){
+    cv::VideoCapture tempCapture(tempFile);
+    while(tempCapture.read(img)){
         ++l;
     }
-    return l;
+    length = l;
+    tempCapture.release();
 }
 
+/** 
+ * getCodec	-	get the codec of input video
+ *
+ * @param codec	-	the codec arrays
+ *
+ * @return the codec integer
+ */
 int VideoProcessor::getCodec(char codec[])
 {
     union {
@@ -110,6 +166,12 @@ int VideoProcessor::getCodec(char codec[])
     return returned.value;
 }
 
+
+/** 
+ * getTempFile	-	temp file lists
+ *
+ * @param str	-	the reference of the output string
+ */
 void VideoProcessor::getTempFile(std::string &str)
 {
     if (!tempFileList.empty()){
@@ -120,10 +182,27 @@ void VideoProcessor::getTempFile(std::string &str)
     }
 }
 
+/** 
+ * getCurTempFile	-	get current temp file
+ *
+ * @param str	-	the reference of the output string
+ */
+void VideoProcessor::getCurTempFile(std::string &str)
+{
+    str = tempFile;
+}
 
+/** 
+ * setInput	-	set the name of the expected video file
+ *
+ * @param fileName	-	the name of the video file
+ *
+ * @return True if success. False otherwise
+ */
 bool VideoProcessor::setInput(const std::string &fileName)
 {
     fnumber = 0;
+    tempFile = fileName;
 
     // In case a resource was already
     // associated with the VideoCapture instance
@@ -133,9 +212,10 @@ bool VideoProcessor::setInput(const std::string &fileName)
 
     // Open the video file
     if(capture.open(fileName)){
-        length = capture.get(CV_CAP_PROP_FRAME_COUNT);
         cv::Mat input;
         getNextFrame(input);
+        length = capture.get(CV_CAP_PROP_FRAME_COUNT);
+        length = getLength();
         emit showFrame(input);
         emit updateBtn();
         return true;
@@ -144,6 +224,18 @@ bool VideoProcessor::setInput(const std::string &fileName)
     }
 }
 
+/** 
+ * setOutput	-	set the output video file
+ *
+ * by default the same parameters than input video will be used
+ *
+ * @param filename	-	filename prefix
+ * @param codec		-	the codec
+ * @param framerate -	frame rate
+ * @param isColor	-	is the video colorful
+ *
+ * @return True if successful. False otherwise
+ */
 bool VideoProcessor::setOutput(const std::string &filename, int codec, double framerate, bool isColor)
 {
     outputFile = filename;
@@ -166,6 +258,18 @@ bool VideoProcessor::setOutput(const std::string &filename, int codec, double fr
                        isColor);       // color video?
 }
 
+/** 
+ * set the output as a series of image files
+ *
+ * extension must be ".jpg", ".bmp" ...
+ *
+ * @param filename	-	filename prefix
+ * @param ext		-	image file extension
+ * @param numberOfDigits	-	number of digits
+ * @param startIndex	-	start index
+ *
+ * @return True if successful. False otherwise
+ */
 bool VideoProcessor::setOutput(const std::string &filename, const std::string &ext, int numberOfDigits, int startIndex)
 {
     // number of digits must be positive
@@ -184,7 +288,18 @@ bool VideoProcessor::setOutput(const std::string &filename, const std::string &e
     return true;
 }
 
-bool VideoProcessor::setTemp(int codec, double framerate, bool isColor)
+/** 
+ * setTemp	-	set the temp video file
+ *
+ * by default the same parameters to the input video
+ *
+ * @param codec	-	video codec
+ * @param framerate	-	frame rate
+ * @param isColor	-	is the video colorful
+ *
+ * @return True if successful. False otherwise
+ */
+bool VideoProcessor::createTemp(int codec, double framerate, bool isColor)
 {
     std::stringstream ss;
     ss << "temp_" << QDateTime::currentDateTime().toTime_t() << ".avi";
@@ -209,83 +324,174 @@ bool VideoProcessor::setTemp(int codec, double framerate, bool isColor)
                        isColor);       // color video?
 }
 
+/** 
+ * setFrameProcessor	-	set the callback function that will be called for each frame
+ *
+ * @param frameProcessingCallback	-	callback function for processing
+ */
 void VideoProcessor::setFrameProcessor(void (*frameProcessingCallback)(cv::Mat&, cv::Mat&))
 {
     // invalidate frame processor class instance
     frameProcessor = 0;
     // this is the frame processor function that will be called
     process = frameProcessingCallback;
-    callProcess();
 }
 
+/** 
+ * setFrameProcessor	-	set the instance of the class that implements the FrameProcessor interface
+ *
+ * @param frameProcessorPtr -	the instance of the class that implements the FrameProcessor interface
+ */
 void VideoProcessor::setFrameProcessor(FrameProcessor *frameProcessorPtr)
 {
     // invalidate callback function
     process = 0;
     // this is the frame processor instance that will be called
     frameProcessor = frameProcessorPtr;
-    callProcess();
 }
 
-bool VideoProcessor::setFrameNumber(long pos)
-{
-    return capture.set(CV_CAP_PROP_POS_FRAMES, pos);
-}
-
-bool VideoProcessor::setPositionMS(double pos)
-{
-    return capture.set(CV_CAP_PROP_POS_MSEC, pos);
-}
-
+/** 
+ * stopIt	-	stop playing
+ *
+ */
 void VideoProcessor::stopIt()
 {
     play = false;
     emit revert();
 }
 
+/** 
+ * prevFrame	-	display the prev frame of the sequence
+ *
+ */
 void VideoProcessor::prevFrame()
 {
-
+    if(isPlay())
+        pauseIt();
+    if (curPos >= 0){
+        curPos -= 1;
+        jumpTo(curPos);
+    }
+    emit updateProgressBar();
 }
 
+/** 
+ * nextFrame	-	display the next frame of the sequence
+ *
+ */
 void VideoProcessor::nextFrame()
 {
-
+    if(isPlay())
+        pauseIt();
+    curPos += 1;
+    if (curPos <= length){
+        curPos += 1;
+        jumpTo(curPos);
+    }
+    emit updateProgressBar();
 }
 
-void VideoProcessor::jumpTo(long index)
+/** 
+ * jumpTo	-	Jump to a position
+ *
+ * @param index	-	frame index
+ *
+ * @return True if success. False otherwise
+ */
+bool VideoProcessor::jumpTo(long index)
 {
-    cv::Mat frame;
-    capture.set(CV_CAP_PROP_POS_FRAMES, index);
+    if (index >= length){
+        return 1;
+    }
 
-    if (!isPlay()){
+    cv::Mat frame;
+    bool re = capture.set(CV_CAP_PROP_POS_FRAMES, index);
+
+    if (re && !isPlay()){
         capture.read(frame);
         emit showFrame(frame);
     }
 
-    emit updateProgressBar();
+    return re;
 }
 
+
+/** 
+ * jumpToMS	-	jump to a position at a time
+ *
+ * @param pos	-	time
+ *
+ * @return True if success. False otherwise
+ *
+ */
+bool VideoProcessor::jumpToMS(double pos)
+{
+    return capture.set(CV_CAP_PROP_POS_MSEC, pos);
+}
+
+
+/** 
+ * close	-	close the video
+ *
+ */
+void VideoProcessor::close()
+{
+    modify = 0;
+    capture.release();
+    writer.release();
+    tempWriter.release();
+}
+
+/** 
+ * isPlay	-	Is the player playing?
+ *
+ *
+ * @return True if playing. False otherwise
+ */
 bool VideoProcessor::isPlay()
 {
     return play;
 }
 
+/** 
+ * isModified	-	Is the video modified?
+ *
+ *
+ * @return True if modified. False otherwise
+ */
 bool VideoProcessor::isModified()
 {
     return modify;
 }
 
+/** 
+ * isOpened	-	Is the player opened?
+ *
+ *
+ * @return True if opened. False otherwise 
+ */
 bool VideoProcessor::isOpened()
 {
     return capture.isOpened();
 }
 
+/** 
+ * getNextFrame	-	get the next frame if any
+ *
+ * @param frame	-	the expected frame
+ *
+ * @return True if success. False otherwise
+ */
 bool VideoProcessor::getNextFrame(cv::Mat &frame)
 {
     return capture.read(frame);
 }
 
+/** 
+ * writeNextFrame	-	to write the output frame
+ *
+ * @param frame	-	the frame to be written
+ */
 void VideoProcessor::writeNextFrame(cv::Mat &frame)
 {
     if (extension.length()) { // then we write images
@@ -300,6 +506,10 @@ void VideoProcessor::writeNextFrame(cv::Mat &frame)
     }
 }
 
+/** 
+ * playIt	-	play the frames of the sequence
+ *
+ */
 void VideoProcessor::playIt()
 {
     // current frame
@@ -309,7 +519,10 @@ void VideoProcessor::playIt()
     if (!isOpened())
         return;
 
+    // set the play flag to be true
     play = true;
+
+    // update buttons
     emit updateBtn();
 
     while (isPlay()) {
@@ -318,9 +531,12 @@ void VideoProcessor::playIt()
         if (!getNextFrame(input))
             break;
 
+        curPos = capture.get(CV_CAP_PROP_POS_FRAMES);
+
         // display input frame
         emit showFrame(input);
 
+        // update the progress bar
         emit updateProgressBar();
 
         // introduce a delay
@@ -330,19 +546,29 @@ void VideoProcessor::playIt()
         if (frameToStop>=0 && getFrameNumber()==frameToStop)
             stopIt();
     }
-    if (isPlay())
+    if (isPlay()){
         emit revert();
+    }
 }
 
+/** 
+ * pauseIt	-	pause playing
+ *
+ */
 void VideoProcessor::pauseIt()
 {
     play = false;
     emit updateBtn();
 }
 
+/** 
+ * runProcess	-	process the frames of the sequence
+ *
+ */
 void VideoProcessor::runProcess()
 {
-    setTemp();
+    // create a temp file
+    createTemp();
 
     // current frame
     cv::Mat input;
@@ -353,7 +579,13 @@ void VideoProcessor::runProcess()
     if (!isOpened())
         return;
 
+    // set the modify flag to be true
     modify = true;
+
+    // save the current position
+    long pos = curPos;
+    // jump to the first frame
+    jumpTo(0);
 
     while (getNextFrame(input)) {
 
@@ -365,34 +597,65 @@ void VideoProcessor::runProcess()
 
         fnumber++;
 
+        // write the frame to the temp file
         tempWriter.write(output);
     }
 
+    // release the temp writer
+    tempWriter.release();
+
+    // change the video to the processed video 
     setInput(tempFile);
 
-    //emit revert();
+    // jump back to the original position
+    jumpTo(pos);
 }
 
+
+/** 
+ * writeOutput	-	write the processed result
+ *
+ */
 void VideoProcessor::writeOutput()
 {
-    cv::Mat output;
+    cv::Mat input;
 
     // if no capture device has been set
-    if (!isOpened())
+    if (!isOpened() || !writer.isOpened())
         return;
 
-    while (!getNextFrame(output)) {
+    // save the current position
+    long pos = curPos;
+    
+    // jump to the first frame
+    jumpTo(0);
+
+    while (getNextFrame(input)) {
 
         // write output sequence
         if (outputFile.length()!=0)
-            writeNextFrame(output);
+            writeNextFrame(input);
     }
 
+    // set the modify flag to false
     modify = false;
+
+    // release the writer
+    writer.release();
+
+    // jump back to the original position
+    jumpTo(pos);
 }
 
+/** 
+ * revertVideo	-	revert playing
+ *
+ */
 void VideoProcessor::revertVideo()
 {
-    jumpTo(0);
-    emit updateBtn();
+    // pause the video
+    jumpTo(0);    
+    curPos = 0;
+    pauseIt();
+    emit updateProgressBar();
 }

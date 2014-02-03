@@ -1,6 +1,6 @@
-TinyEditor/TinyEditor
 *.o
 *.user
 ui_*
 *-Debug/
 *-Release/
+excutable

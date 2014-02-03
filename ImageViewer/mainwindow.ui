@@ -11,7 +11,7 @@
    </rect>
   </property>
   <property name="windowTitle">
-   <string>MainWindow</string>
+   <string>ImageViewer</string>
   </property>
   <property name="windowIcon">
    <iconset resource="myResources.qrc">
@@ -30,7 +30,7 @@
          <x>0</x>
          <y>0</y>
          <width>591</width>
-         <height>297</height>
+         <height>304</height>
         </rect>
        </property>
        <layout class="QGridLayout" name="gridLayout_2">
@@ -56,7 +56,7 @@
      <x>0</x>
      <y>0</y>
      <width>611</width>
-     <height>23</height>
+     <height>17</height>
     </rect>
    </property>
    <widget class="QMenu" name="menu_File">

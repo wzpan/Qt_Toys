@@ -158,6 +158,8 @@
     <addaction name="separator"/>
     <addaction name="actionSave_as"/>
     <addaction name="separator"/>
+    <addaction name="actionClean_Temp_Files"/>
+    <addaction name="separator"/>
     <addaction name="actionQuit"/>
    </widget>
    <widget class="QMenu" name="menuProcessor">
@@ -334,6 +336,15 @@
   <action name="action_Erosion">
    <property name="text">
     <string>&amp;Erosion</string>
+   </property>
+  </action>
+  <action name="actionClean_Temp_Files">
+   <property name="icon">
+    <iconset resource="myResources.qrc">
+     <normaloff>:/myImages/actions/edit-clear.png</normaloff>:/myImages/actions/edit-clear.png</iconset>
+   </property>
+   <property name="text">
+    <string>Clean Temp Files</string>
    </property>
   </action>
  </widget>

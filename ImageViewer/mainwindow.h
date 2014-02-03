@@ -28,8 +28,6 @@ public:
     explicit MainWindow(QWidget *parent = 0);
     ~MainWindow();
 
-    void updateStatus(bool vi);   // Update objects' visibility
-
     // File functions
 	bool maybeSave();   // whether needs save
     bool save();        // save
@@ -37,9 +35,6 @@ public:
     bool saveImage(const QString &fileName);     // save file
     bool loadImage(const QString &fileName);    // load file
     void showImage(Mat img);        // display image on label control
-
-    void erosion();
-    void dilation();
     void adjust();
 
     // Help functions
@@ -68,6 +63,10 @@ protected:
     void timerEvent(QTimerEvent *);         // Timer event
     
 private:
+    void updateStatus(bool vi);   // Update objects' visibility
+    void erosion();
+    void dilation();
+   
     Ui::MainWindow *ui;
 
     QString emptyTip;   // tips when no image is opened

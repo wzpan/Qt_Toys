@@ -1,12 +1,49 @@
 #include "ErosionProcessor.h"
 
+ErosionProcessor::ErosionProcessor()
+{
+    size = 0;
+    elem = 0;
+}
+
+/** 
+ * process	-	erosion processing method
+ *
+ * @param img	-	the input image
+ * @param out	-	the output image
+ */
 void ErosionProcessor :: process(cv::Mat &img, cv::Mat &out)
 {
-    int erosion_type = 0;	// Rect
-    int erosion_size = 5;	// Size
-    cv::Mat element = cv::getStructuringElement( erosion_type,
-                                             cv::Size( 2*erosion_size + 1, 2*erosion_size+1 ),
-                                             cv::Point( erosion_size, erosion_size ) );
+    cv::Mat element = cv::getStructuringElement( 0,
+                                             cv::Size( 2*size + 1, 2*size+1 ),
+                                             cv::Point( size, size ) );
     /// Apply the erosion operation
     cv::erode( img, out, element );
 }
+
+int ErosionProcessor::getSize()
+{
+    return size;
+}
+
+int ErosionProcessor::getElem()
+{
+    return elem;
+}
+
+void ErosionProcessor::setSize(int s)
+{
+    size = s;
+}
+
+void ErosionProcessor::setElem(int e)
+{
+    elem = e;
+}
+
+void ErosionProcessor::setParam(int s, int e)
+{
+    setSize(s);
+    setElem(e);
+}
+

@@ -23,8 +23,6 @@ public:
     explicit MainWindow(QWidget *parent = 0);
     ~MainWindow();
 
-    void updateEnable(bool vi);   // Update objects' visibility
-
     // File functions
     void newFile();     // New file
     bool maybeSave();   // whether needs save
@@ -60,6 +58,8 @@ protected:
     void timerEvent(QTimerEvent *);         // Timer event
 
 private:
+    void updateEnable(bool vi);   // Update objects' visibility
+      
     Ui::MainWindow *ui;
 
     int timer;             // timer

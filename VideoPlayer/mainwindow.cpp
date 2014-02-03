@@ -8,12 +8,16 @@ MainWindow::MainWindow(QWidget *parent) :
     ui->setupUi(this);
     rateLabel = new QLabel;         // Frame rate
 
-    inputTip = "Input";
+    inputTip = "Please open a video.";
     ui->videoLabel->setText(inputTip);
 
     // Status bar
     rateLabel->setText("");
     ui->statusBar->addPermanentWidget(rateLabel);
+
+    // Erosion dialog
+    erosionDialog = 0;
+    erosion = 0;
 
     updateStatus(false);
 
@@ -68,8 +72,6 @@ void MainWindow::clean()
 {
     QString path = ".";
     QDir dir(path);
-    dir.setNameFilters(QStringList() << "temp*.avi");
-    dir.setFilter(QDir::Files);
 
     std::string dirFile;
 
@@ -224,6 +226,18 @@ bool MainWindow::LoadFile(const QString &fileName)
     return true;
 }
 
+void MainWindow::process()
+{
+    // change the cursor
+    QApplication::setOverrideCursor(Qt::WaitCursor);
+
+    // run the process
+    video->runProcess();
+
+    // restore the cursor
+    QApplication::restoreOverrideCursor();
+}
+
 
 /** 
  * showImage	-	show a image
@@ -282,9 +296,10 @@ void MainWindow::updateBtn()
  */
 void MainWindow::updateProgressBar()
 {
+    long length = video->getLength();
     ui->progressSlider->setValue(video->getNumberOfPlayedFrames()
                                  * ui->progressSlider->maximum()
-                                 / video->getLength() * 1.0);
+                                 / length * 1.0);
 }
 
 /**
@@ -308,8 +323,10 @@ void MainWindow::on_actionOpen_triggered()
                                                     ".",
                                                     tr("Video Files (*.avi *.mov *.mpeg)"));
     if(!fileName.isEmpty()) {
-        if(LoadFile(fileName))
+        if(LoadFile(fileName)){
             updateStatus(true);
+            updateBtn();
+        }
     }
 }
 
@@ -328,6 +345,7 @@ void MainWindow::on_actionClose_triggered()
     if (maybeSave()) {
         updateStatus(false);
         ui->videoLabel->setText(inputTip);
+        video->close();
         clean();
     }
 }
@@ -350,63 +368,103 @@ void MainWindow::on_actionAbout_Qt_triggered()
     qApp->aboutQt();
 }
 
-void MainWindow::on_btnPlay_clicked()
-{
-    play();
-}
-
+// stop action
 void MainWindow::on_actionStop_S_triggered()
 {
     video->stopIt();
 }
+
+// stop button action
 void MainWindow::on_btnStop_clicked()
 {
     video->stopIt();
 }
 
+// play button action
+void MainWindow::on_btnPlay_clicked()
+{
+    play();
+}
+
+// play action
 void MainWindow::on_actionPlay_triggered()
 {
     play();
 }
 
+// pause action
 void MainWindow::on_actionPause_triggered()
 {
     video->pauseIt();
 }
 
+// pause button
 void MainWindow::on_btnPause_clicked()
 {
     video->pauseIt();
 }
 
+// next frame
 void MainWindow::on_btnNext_clicked()
 {
     video->nextFrame();
 }
 
-
+// prev frame
 void MainWindow::on_btnLast_clicked()
 {
     video->prevFrame();
 }
 
+// erosion processor
 void MainWindow::on_action_Erosion_triggered()
 {
-    ErosionProcessor erosion;
-    video->setFrameProcessor(&erosion);
+    // show erosion dialog
+    if (!erosionDialog) {
+        erosionDialog = new ErosionDialog(this);
+    }
 
-    // change the cursor
-    QApplication::setOverrideCursor(Qt::WaitCursor);
+    erosionDialog->show();
+    erosionDialog->raise();
+    erosionDialog->activateWindow();
 
-    // run the process
-    video->runProcess();
-
-    // restore the cursor
-    QApplication::restoreOverrideCursor();
+    if (erosionDialog->exec() == QDialog::Accepted){
+        // initialize erosion processor
+        if (!erosion)
+            erosion = new ErosionProcessor();
+        // get neccessarry parameters
+        int size = erosionDialog->getSize();	
+        int elem = erosionDialog->getElem();
+        // set parameters
+        erosion->setSize(size);
+        erosion->setElem(elem);
+        // set erosion processor as the current frame processor
+        video->setFrameProcessor(erosion);
+        // do process
+        process();
+    }
 }
 
+// actions when progress slider moves
 void MainWindow::on_progressSlider_sliderMoved(int position)
 {
     long pos = position * video->getLength() / ui->progressSlider->maximum();
     video->jumpTo(pos);
+}
+
+
+// Clean all the temp files
+void MainWindow::on_actionClean_Temp_Files_triggered()
+{
+    QString path = ".";
+    QDir dir(path);
+    dir.setNameFilters(QStringList() << "temp*.avi");
+    dir.setFilter(QDir::Files);
+    std::string temp;
+
+    foreach(QString dirFile, dir.entryList()){
+        video->getCurTempFile(temp);
+        if (dirFile != QString::fromStdString(temp))
+            dir.remove(dirFile);
+    }
 }

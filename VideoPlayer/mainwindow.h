@@ -9,7 +9,7 @@
 #include <QMessageBox>
 #include <QLabel>
 #include <queue>
-#include <dbg.h>
+#include "ErosionDialog.h"
 #include "VideoProcessor.h"
 #include "ErosionProcessor.h"
 #include "WindowHelper.h"
@@ -38,6 +38,7 @@ public:
     bool saveAs();      // save as
     bool saveFile(const QString &fileName);     // save file
     bool LoadFile(const QString &fileName);    // load file
+    void process();     // process
 
     // Help functions
     void about();
@@ -72,25 +73,34 @@ private slots:
 
     void on_btnLast_clicked();  
 
-    void showFrame(cv::Mat frame);    
-
     void on_action_Erosion_triggered();
 
-    void revert();
-
-    void sleep(int msecs);
-
-    void updateBtn();
-
-    void updateProgressBar();
-
     void on_progressSlider_sliderMoved(int position);
+
+    void on_actionClean_Temp_Files_triggered();
+
+    void showFrame(cv::Mat frame);      // show a frame
+
+    void revert();                      // revert playing
+
+    void sleep(int msecs);              // sleep for a while
+
+    void updateBtn();                   // update button status
+
+    void updateProgressBar();           // update progress bar
+
+
 
 protected:
     void closeEvent(QCloseEvent *);
     
 private:
-    Ui::MainWindow *ui;    
+    Ui::MainWindow *ui;
+
+    // Erosion dialog
+    ErosionDialog *erosionDialog;
+    // Erosion processor
+    ErosionProcessor *erosion;
 
     void updateStatus(bool vi);
 
@@ -106,8 +116,11 @@ private:
     // video processor instance
     VideoProcessor *video;
 
+    // a window helper with some useful
+    // functions e.g. sleep
     WindowHelper *helper;
 
+    // for cleaning temp files
     void clean();
 };
 

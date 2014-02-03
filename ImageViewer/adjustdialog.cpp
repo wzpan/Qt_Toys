@@ -55,3 +55,10 @@ void AdjustDialog::on_checkPreview_clicked()
     else
         emit reset();
 }
+
+
+
+
+
+
+
