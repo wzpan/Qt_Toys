@@ -51,7 +51,7 @@ public:
     // return the frame number of the next frame
     long getFrameNumber();
 
-    // return the position in ms
+    // return the position in milliseconds
     double getPositionMS();
 
     // return the frame rate
@@ -59,6 +59,9 @@ public:
 
     // return the number of frames in video
     long getLength();
+
+    // return the video length in milliseconds
+    double getLengthMS();
 
     // get the codec of input video
     int getCodec(char codec[4]);
@@ -110,7 +113,7 @@ public:
     // Jump to a position
     bool jumpTo(long index);
 
-    // go to this position
+    // Jump to a position in milliseconds
     bool jumpToMS(double pos);
 
     // close the video
@@ -146,6 +149,8 @@ private:
     FrameProcessor *frameProcessor;
     // delay between each frame processing
     int delay;
+    // video frame rate
+    double rate;
     // number of processed frames
     long fnumber;
     // total number of frames

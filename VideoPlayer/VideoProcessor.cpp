@@ -89,9 +89,9 @@ long VideoProcessor::getFrameNumber()
 }
 
 /** 
- * getPositionMS	-	return the position in ms
+ * getPositionMS	-	return the position in milliseconds
  *
- * @return the position in ms
+ * @return the position in milliseconds
  */
 double VideoProcessor::getPositionMS()
 {
@@ -114,15 +114,26 @@ double VideoProcessor::getFrameRate()
 }
 
 /** 
- * getLength	-	the number of frames in video
+ * getLength	-	return the number of frames in video
  *
  * @return the number of frames
  */
 long VideoProcessor::getLength()
 {
-    if (length <= 0)
-        calculateLength();
     return length;
+}
+
+
+/** 
+ * getLengthMS	-	return the video length in milliseconds
+ *
+ *
+ * @return the length of length in milliseconds
+ */
+double VideoProcessor::getLengthMS()
+{
+    double l = 1000.0 * length / rate;
+    return l;
 }
 
 /** 
@@ -215,7 +226,7 @@ bool VideoProcessor::setInput(const std::string &fileName)
         cv::Mat input;
         getNextFrame(input);
         length = capture.get(CV_CAP_PROP_FRAME_COUNT);
-        length = getLength();
+        rate = getFrameRate();
         emit showFrame(input);
         emit updateBtn();
         return true;
@@ -436,6 +447,8 @@ bool VideoProcessor::jumpToMS(double pos)
  */
 void VideoProcessor::close()
 {
+    rate = 0;
+    length = 0;
     modify = 0;
     capture.release();
     writer.release();

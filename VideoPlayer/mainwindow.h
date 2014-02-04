@@ -4,6 +4,7 @@
 #include <QMainWindow>
 #include <QCloseEvent>
 #include <QDateTime>
+#include <QTime>
 #include <QFileDialog>
 #include <QPushButton>
 #include <QMessageBox>
@@ -75,9 +76,9 @@ private slots:
 
     void on_action_Erosion_triggered();
 
-    void on_progressSlider_sliderMoved(int position);
-
     void on_actionClean_Temp_Files_triggered();
+
+    void on_progressSlider_valueChanged(int value);
 
     void showFrame(cv::Mat frame);      // show a frame
 
@@ -88,8 +89,6 @@ private slots:
     void updateBtn();                   // update button status
 
     void updateProgressBar();           // update progress bar
-
-
 
 protected:
     void closeEvent(QCloseEvent *);
@@ -106,10 +105,10 @@ private:
 
     // tips when no image is opened
     QString inputTip;
-    QString outputTip;
 
     // frame label
     QLabel *rateLabel;
+
     // current file's location
     QString curFile;
 

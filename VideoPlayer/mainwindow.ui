@@ -26,7 +26,7 @@
          <x>0</x>
          <y>0</y>
          <width>683</width>
-         <height>361</height>
+         <height>343</height>
         </rect>
        </property>
        <layout class="QGridLayout" name="gridLayout_2">
@@ -44,7 +44,7 @@
       </widget>
      </widget>
     </item>
-    <item row="2" column="0">
+    <item row="4" column="0">
      <widget class="QWidget" name="widget" native="true">
       <layout class="QHBoxLayout" name="horizontalLayout">
        <item>
@@ -131,10 +131,20 @@
       </layout>
      </widget>
     </item>
-    <item row="1" column="0">
+    <item row="2" column="0">
      <widget class="QSlider" name="progressSlider">
       <property name="orientation">
        <enum>Qt::Horizontal</enum>
+      </property>
+     </widget>
+    </item>
+    <item row="3" column="0">
+     <widget class="QLabel" name="timeLabel">
+      <property name="text">
+       <string/>
+      </property>
+      <property name="alignment">
+       <set>Qt::AlignRight|Qt::AlignTrailing|Qt::AlignVCenter</set>
       </property>
      </widget>
     </item>

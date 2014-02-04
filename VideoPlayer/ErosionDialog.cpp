@@ -26,10 +26,8 @@ void ErosionDialog::on_comboElement_currentIndexChanged(int index)
 
 void ErosionDialog::on_sizeSlider_valueChanged(int value)
 {
-    size = value;
-    std::stringstream ss;
-    ss << value;
-    ui->sizeLabel->setText(QString::fromStdString(ss.str()));
+    ui->sizeLabel->setText(tr("<p>Kernel Size:</p>"
+                              "<p><b>%1</b></p>").arg(value));
 }
 
 

@@ -8,6 +8,7 @@ MainWindow::MainWindow(QWidget *parent) :
     ui->setupUi(this);
     rateLabel = new QLabel;         // Frame rate
 
+    // remind users to open a video
     inputTip = "Please open a video.";
     ui->videoLabel->setText(inputTip);
 
@@ -57,6 +58,7 @@ void MainWindow::updateStatus(bool vi)
     ui->btnPlay->setEnabled(vi);
     ui->btnStop->setEnabled(vi);
     ui->btnPause->setEnabled(vi);
+
 
     if(!vi){
         ui->progressSlider->setValue(0);
@@ -220,6 +222,17 @@ bool MainWindow::LoadFile(const QString &fileName)
     // restore the cursor
     QApplication::restoreOverrideCursor();
 
+    // update the frame rate
+    rateLabel->setText(tr("Frame rate: %1").arg(video->getFrameRate()));
+
+    // update the time label
+    QString curPos = QDateTime::fromMSecsSinceEpoch(
+                video->getPositionMS()).toString("hh:mm::ss");
+    QString length = QDateTime::fromMSecsSinceEpoch(
+                video->getLengthMS()).toString("hh:mm::ss");
+    ui->timeLabel->setText(tr("<span style=' color:#ff0000;'>"
+                              "%1</span> / %2").arg(curPos, length));
+
     // set the current file location
     curFile = QFileInfo(fileName).canonicalPath();
     setWindowTitle(curFile);
@@ -296,10 +309,18 @@ void MainWindow::updateBtn()
  */
 void MainWindow::updateProgressBar()
 {
-    long length = video->getLength();
+    // update the progress bar
     ui->progressSlider->setValue(video->getNumberOfPlayedFrames()
                                  * ui->progressSlider->maximum()
-                                 / length * 1.0);
+                                 / video->getLength() * 1.0);
+
+    // update the time label
+    QString curPos = QDateTime::fromMSecsSinceEpoch(
+                video->getPositionMS()).toString("hh:mm::ss");
+    QString length = QDateTime::fromMSecsSinceEpoch(
+                video->getLengthMS()).toString("hh:mm::ss");
+    ui->timeLabel->setText(tr("<span style=' color:#ff0000;'>"
+                              "%1</span> / %2").arg(curPos, length));
 }
 
 /**
@@ -347,6 +368,8 @@ void MainWindow::on_actionClose_triggered()
         ui->videoLabel->setText(inputTip);
         video->close();
         clean();
+        ui->timeLabel->setText("");
+        rateLabel->setText("");
     }
 }
 
@@ -445,26 +468,36 @@ void MainWindow::on_action_Erosion_triggered()
     }
 }
 
-// actions when progress slider moves
-void MainWindow::on_progressSlider_sliderMoved(int position)
-{
-    long pos = position * video->getLength() / ui->progressSlider->maximum();
-    video->jumpTo(pos);
-}
-
-
 // Clean all the temp files
 void MainWindow::on_actionClean_Temp_Files_triggered()
 {
     QString path = ".";
     QDir dir(path);
+
+    // set filter
     dir.setNameFilters(QStringList() << "temp*.avi");
     dir.setFilter(QDir::Files);
     std::string temp;
 
+    // delete all the temp files
     foreach(QString dirFile, dir.entryList()){
         video->getCurTempFile(temp);
         if (dirFile != QString::fromStdString(temp))
             dir.remove(dirFile);
     }
+}
+
+// Change the progress by movinng slider
+void MainWindow::on_progressSlider_valueChanged(int value)
+{
+    long pos = value * video->getLength() /
+            ui->progressSlider->maximum();
+    video->jumpTo(pos);
+
+    QString curPos = QDateTime::fromMSecsSinceEpoch(
+                video->getPositionMS()).toString("hh:mm::ss");
+    QString length = QDateTime::fromMSecsSinceEpoch(
+                video->getLengthMS()).toString("hh:mm::ss");
+    ui->timeLabel->setText(tr("<span style=' color:#ff0000;'>"
+                              "%1</span> / %2").arg(curPos, length));
 }
