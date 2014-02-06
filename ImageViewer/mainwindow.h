@@ -8,12 +8,14 @@
 #include <QPushButton>
 #include <QMessageBox>
 #include <QLabel>
-#include "MorphoDialog.h"
-#include "MorphoProcessor.h"
-#include "ImageProcessor.h"
 #include <opencv2/core/core.hpp>
 #include <opencv2/highgui/highgui.hpp>
 #include <opencv2/imgproc/imgproc.hpp>
+#include "ImageProcessor.h"
+#include "MorphoDialog.h"
+#include "MorphoProcessor.h"
+#include "SaltDialog.h"
+#include "SaltProcessor.h"
 
 namespace Ui {
     class MainWindow;
@@ -62,9 +64,10 @@ private slots:
 
     void reset();    	// cancel processing
 
+    void on_actionSalt_Pepper_Noise_triggered();
+
 protected:
     void closeEvent(QCloseEvent *event);    // Close event
-    void timerEvent(QTimerEvent *);         // Timer event
     
 private:
     void updateStatus(bool vi);   // Update objects' visibility
@@ -85,8 +88,11 @@ private:
     MorphoDialog *morphoDialog;
     MorphoProcessor *morphoProcessor;
 
-    int timer;			// timer
-    QLabel *timeLabel;	// time label
+    // salt-and-pepper noise
+    SaltDialog *saltDialog;
+    SaltProcessor *saltProcessor;
+
+    QLabel *sizeLabel;	// size label
 };
 
 #endif // MAINWINDOW_H

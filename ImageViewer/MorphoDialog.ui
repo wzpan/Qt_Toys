@@ -154,16 +154,16 @@
        </spacer>
       </item>
       <item>
-       <widget class="QPushButton" name="cancelButton">
+       <widget class="QPushButton" name="okButton">
         <property name="text">
-         <string>&amp;Cancel</string>
+         <string>&amp;Ok</string>
         </property>
        </widget>
       </item>
       <item>
-       <widget class="QPushButton" name="okButton">
+       <widget class="QPushButton" name="cancelButton">
         <property name="text">
-         <string>&amp;Ok</string>
+         <string>&amp;Cancel</string>
         </property>
        </widget>
       </item>

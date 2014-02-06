@@ -6,8 +6,8 @@
    <rect>
     <x>0</x>
     <y>0</y>
-    <width>612</width>
-    <height>442</height>
+    <width>617</width>
+    <height>519</height>
    </rect>
   </property>
   <property name="windowTitle">
@@ -29,8 +29,8 @@
         <rect>
          <x>0</x>
          <y>0</y>
-         <width>592</width>
-         <height>344</height>
+         <width>597</width>
+         <height>421</height>
         </rect>
        </property>
        <layout class="QGridLayout" name="gridLayout_2">
@@ -55,7 +55,7 @@
     <rect>
      <x>0</x>
      <y>0</y>
-     <width>612</width>
+     <width>617</width>
      <height>17</height>
     </rect>
    </property>
@@ -76,6 +76,7 @@
      <string>Edit(&amp;E)</string>
     </property>
     <addaction name="actionMorpho"/>
+    <addaction name="actionSalt_Pepper_Noise"/>
    </widget>
    <widget class="QMenu" name="menuHelp">
     <property name="title">
@@ -194,9 +195,9 @@
     <string>About &amp;Qt</string>
    </property>
   </action>
-  <action name="actionNoise">
+  <action name="actionSalt_Pepper_Noise">
    <property name="text">
-    <string>&amp;Noise</string>
+    <string>Salt and Pepper &amp;Noise</string>
    </property>
   </action>
  </widget>

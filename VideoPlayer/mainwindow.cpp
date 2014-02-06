@@ -17,8 +17,8 @@ MainWindow::MainWindow(QWidget *parent) :
     ui->statusBar->addPermanentWidget(rateLabel);
 
     // Morphology processor
-    morphologyDialog = 0;
-    morphologyProcessor = 0;
+    morphoDialog = 0;
+    morphoProcessor = 0;
 
     updateStatus(false);
 
@@ -222,6 +222,7 @@ bool MainWindow::LoadFile(const QString &fileName)
     // change the cursor
     QApplication::setOverrideCursor(Qt::WaitCursor);
     
+    // input file
     if (!video->setInput(fileName.toStdString())){
         QMessageBox::warning(this, tr("VideoPlayer"),
                              tr("Unable to load file %1:\n%2.")
@@ -470,21 +471,21 @@ void MainWindow::on_actionClean_Temp_Files_triggered()
 
 void MainWindow::on_action_Morpho_triggered()
 {
-    if (!morphologyProcessor)
-        morphologyProcessor = new MorphologyProcessor();
+    if (!morphoProcessor)
+        morphoProcessor = new MorphologyProcessor();
 
     // show morphology dialog
-    if (!morphologyDialog) {
-        morphologyDialog = new MorphologyDialog(this, morphologyProcessor);
+    if (!morphoDialog) {
+        morphoDialog = new MorphologyDialog(this, morphoProcessor);
     }
 
-    morphologyDialog->show();
-    morphologyDialog->raise();
-    morphologyDialog->activateWindow();
+    morphoDialog->show();
+    morphoDialog->raise();
+    morphoDialog->activateWindow();
 
-    if (morphologyDialog->exec() == QDialog::Accepted) {
+    if (morphoDialog->exec() == QDialog::Accepted) {
         // set morphology processor as the current frame processor
-        video->setFrameProcessor(morphologyProcessor);
+        video->setFrameProcessor(morphoProcessor);
         // do process
         process();
     }

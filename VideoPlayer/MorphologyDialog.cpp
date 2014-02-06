@@ -10,6 +10,8 @@ MorphologyDialog::MorphologyDialog(QWidget *parent, MorphologyProcessor *process
 
     ui->comboElement->setCurrentIndex(processor->elem);
     ui->sizeSlider->setValue(processor->size);
+    ui->sizeLabel->setText(tr("<p>Kernel Size:</p>"
+                              "<p><b>%1</b></p>").arg(processor->size));
 }
 
 MorphologyDialog::~MorphologyDialog()

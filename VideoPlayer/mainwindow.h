@@ -97,9 +97,9 @@ private:
     Ui::MainWindow *ui;
 
     // Morphology dialog
-    MorphologyDialog *morphologyDialog;
+    MorphologyDialog *morphoDialog;
     // Morphology processor
-    MorphologyProcessor *morphologyProcessor;
+    MorphologyProcessor *morphoProcessor;
 
     void updateStatus(bool vi);
     void updateTimeLabel();

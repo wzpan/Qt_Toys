@@ -25,6 +25,12 @@ MorphoDialog::~MorphoDialog()
     delete ui;
 }
 
+void MorphoDialog::showEvent(QShowEvent *)
+{
+    if (showPreview)
+        emit preview();
+}
+
 void MorphoDialog::on_comboType_currentIndexChanged(int index)
 {
     processor->type = index;

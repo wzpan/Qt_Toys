@@ -17,6 +17,9 @@ public:
                           MorphoProcessor *processor = 0);
     ~MorphoDialog();
 
+protected:
+    void showEvent(QShowEvent *);
+
 signals:
     void preview(); // preview image in real-time
     void reset();   // reset image

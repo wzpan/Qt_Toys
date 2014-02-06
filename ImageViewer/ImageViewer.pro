@@ -14,15 +14,20 @@ TEMPLATE = app
 SOURCES += main.cpp\
         mainwindow.cpp \
     MorphoDialog.cpp \
-    MorphoProcessor.cpp
+    MorphoProcessor.cpp \
+    SaltProcessor.cpp \
+    SaltDialog.cpp
 
 HEADERS  += mainwindow.h \
     ImageProcessor.h \
     MorphoDialog.h \
-    MorphoProcessor.h
+    MorphoProcessor.h \
+    SaltProcessor.h \
+    SaltDialog.h
 
 FORMS    += mainwindow.ui \
-    MorphoDialog.ui
+    MorphoDialog.ui \
+    SaltDialog.ui
 
 RESOURCES += \
     myResources.qrc

@@ -1,5 +1,6 @@
 #include "mainwindow.h"
 #include "ui_mainwindow.h"
+#include <dbg.h>
 
 MainWindow::MainWindow(QWidget *parent) :
     QMainWindow(parent),
@@ -16,17 +17,20 @@ MainWindow::MainWindow(QWidget *parent) :
     // morphology processor
     morphoProcessor = 0;
 
+    // salt-and-pepper dialog
+    saltDialog = 0;
+    // salt-and-pepper processor
+    saltProcessor = 0;
+
     isModified = false;
 
     emptyTip = "Please open an image.";
     ui->imageLabel->setText(emptyTip);
 
-    // Set timer by 1 sec
-    timer = startTimer(1000);
-
     // Status bar
-    timeLabel = new QLabel;
-    ui->statusBar->addPermanentWidget(timeLabel);
+    sizeLabel = new QLabel;
+    sizeLabel->setText("");
+    ui->statusBar->addPermanentWidget(sizeLabel);
 }
 
 MainWindow::~MainWindow()
@@ -69,15 +73,6 @@ void MainWindow::closeEvent(QCloseEvent *event)
     }
 }
 
-
-/**
- * timerEvent	-	Update the time label
- *
- */
-void MainWindow::timerEvent(QTimerEvent *)
-{
-    timeLabel->setText(QDateTime::currentDateTime().toString("yyyy-MM-dd hh:mm::ss"));
-}
 
 /** 
  * maybeSave	-	some thing to do before the next operation
@@ -207,6 +202,12 @@ bool MainWindow::loadImage(const QString &fileName)
     // restore the cursor
     QApplication::restoreOverrideCursor();
 
+    std::stringstream ss;
+    ss << "Size: " << ui->imageLabel->pixmap()->size().width()
+       << " x " << ui->imageLabel->pixmap()->size().height();
+
+    sizeLabel->setText(QString::fromStdString(ss.str()));
+
     // set the current file location
     curFile = QFileInfo(fileName).canonicalPath();
     setWindowTitle(curFile);
@@ -221,6 +222,7 @@ void MainWindow::showImage(Mat image)
     QImage img = QImage((const unsigned char*)(tmp.data),
                         tmp.cols, tmp.rows, QImage::Format_RGB888);
 
+    // display on label
     ui->imageLabel->setPixmap(QPixmap::fromImage(img));
     ui->imageLabel->repaint();
 }
@@ -254,6 +256,7 @@ void MainWindow::on_actionClose_triggered()
         updateStatus(false);
         ui->imageLabel->setText(emptyTip);
         isModified = false;
+        sizeLabel->setText("");
     }
 }
 
@@ -295,7 +298,44 @@ void MainWindow::on_actionAbout_Qt_triggered()
     qApp->aboutQt();
 }
 
-// Morphology dialog
+
+/**
+ * preview	-	preview the processing result
+ *
+ */
+void MainWindow::preview()
+{
+    processor->process(src, temp);
+
+    showImage(temp);
+}
+
+/**
+ * process	-	process the image
+ *
+ * Process the image by using the current processor.
+ * Be sure to select a processor by using setProcessor()
+ *
+ */
+void MainWindow::process()
+{
+    processor->process(src, temp);
+    src = temp.clone();
+    showImage(temp);
+    isModified = true;
+}
+
+/**
+ * reset	-	cancel the processing and reset the image
+ *
+ */
+void MainWindow::reset()
+{
+    temp = src.clone();
+    showImage(temp);
+}
+
+// morphology transform
 void MainWindow::on_actionMorpho_triggered()
 {
     if (!morphoProcessor)
@@ -327,38 +367,34 @@ void MainWindow::on_actionMorpho_triggered()
     }
 }
 
-/** 
- * preview	-	preview the processing result
- *
- */
-void MainWindow::preview()
+// salt-and-pepper transform
+void MainWindow::on_actionSalt_Pepper_Noise_triggered()
 {
-    processor->process(src, temp);
+    if (!saltProcessor)
+        saltProcessor = new SaltProcessor();
 
-    showImage(temp);
-}
+    // set salt-and-pepper processor as the current frame processor
+    setProcessor(saltProcessor);
 
-/** 
- * process	-	process the image
- * 
- * Process the image by using the current processor.
- * Be sure to select a processor by using setProcessor()
- *
- */
-void MainWindow::process()
-{
-    processor->process(src, temp);
-    src = temp.clone();
-    showImage(temp);
-    isModified = true;
-}
+    if (!saltDialog) {
+        saltDialog = new SaltDialog(this, saltProcessor);
 
-/** 
- * reset	-	cancel the processing and reset the image
- *
- */
-void MainWindow::reset()
-{
-    temp = src.clone();
-    showImage(temp);
+        connect(saltDialog, SIGNAL(preview()),
+                this, SLOT(preview())
+                );
+
+        connect(saltDialog, SIGNAL(reset()),
+                this, SLOT(reset())
+                );
+    }
+
+    saltDialog->show();
+    saltDialog->raise();
+    saltDialog->activateWindow();
+
+    if (saltDialog->exec() == QDialog::Accepted) {
+        process();
+    } else {
+        reset();
+    }
 }
