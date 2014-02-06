@@ -8,12 +8,13 @@ MainWindow::MainWindow(QWidget *parent) :
     ui->setupUi(this);
     updateStatus(false);
 
-    type = 0;
-    elem = 0;
-    size = 0;
+    // basic image processor
+    processor = 0;
 
-    // Adjust dialog
-    adjustDialog = 0;
+    // morphology dialog
+    morphoDialog = 0;    
+    // morphology processor
+    morphoProcessor = 0;
 
     isModified = false;
 
@@ -49,6 +50,11 @@ void MainWindow::updateStatus(bool vi)
     ui->actionSave_as->setEnabled(vi);
 }
 
+void MainWindow::setProcessor(ImageProcessor *imgProcessorPtr)
+{
+    // this is the frame processor instance that will be called
+    processor = imgProcessorPtr;
+}
 
 /** 
  * closeEvent	-	Do a file save check before close the application
@@ -219,36 +225,6 @@ void MainWindow::showImage(Mat image)
     ui->imageLabel->repaint();
 }
 
-void MainWindow::erosion()
-{
-    int erosion_type;
-    if( elem == 0 ){ erosion_type = MORPH_RECT; }
-    else if( elem == 1 ){ erosion_type = MORPH_CROSS; }
-    else if( elem == 2) { erosion_type = MORPH_ELLIPSE; }
-
-    Mat element = getStructuringElement( erosion_type,
-                                           Size( 2*size + 1, 2*size+1 ),
-                                           Point( size, size ) );
-
-    /// erosion operation
-    erode( src, temp, element );
-}
-
-void MainWindow::dilation()
-{
-    int dilation_type;
-    if( elem == 0 ){ dilation_type = MORPH_RECT; }
-    else if( elem == 1 ){ dilation_type = MORPH_CROSS; }
-    else if( elem == 2) { dilation_type = MORPH_ELLIPSE; }
-
-    Mat element = getStructuringElement( dilation_type,
-                                           Size( 2*size + 1, 2*size+1 ),
-                                           Point( size, size ) );
-
-    /// erosion operation
-    dilate( src, temp, element );
-}
-
 // Open image file
 void MainWindow::on_actionOpen_triggered()
 {
@@ -294,6 +270,10 @@ void MainWindow::on_actionSave_triggered()
 }
 
 
+/** 
+ * about	-	display about info
+ *
+ */
 void MainWindow::about()
 {
     QMessageBox::about(this, tr("About ImageViewer"),
@@ -315,64 +295,68 @@ void MainWindow::on_actionAbout_Qt_triggered()
     qApp->aboutQt();
 }
 
-// Adjust dialog
-void MainWindow::on_actionAdjust_triggered()
+// Morphology dialog
+void MainWindow::on_actionMorpho_triggered()
 {
-    if (!adjustDialog) {
-        adjustDialog = new AdjustDialog(this);
+    if (!morphoProcessor)
+        morphoProcessor = new MorphoProcessor();
 
-        connect(adjustDialog, SIGNAL(preview()),
+    // set morphology processor as the current frame processor
+    setProcessor(morphoProcessor);
+
+    if (!morphoDialog) {
+        morphoDialog = new MorphoDialog(this, morphoProcessor);
+
+        connect(morphoDialog, SIGNAL(preview()),
                 this, SLOT(preview())
                 );
 
-        connect(adjustDialog, SIGNAL(reset()),
+        connect(morphoDialog, SIGNAL(reset()),
                 this, SLOT(reset())
                 );
     }
 
-    adjustDialog->show();
-    adjustDialog->raise();
-    adjustDialog->activateWindow();
+    morphoDialog->show();
+    morphoDialog->raise();
+    morphoDialog->activateWindow();
 
-    if (adjustDialog->exec() == QDialog::Accepted){
-        adjust();
+    if (morphoDialog->exec() == QDialog::Accepted) {
+        process();
     } else {
         reset();
     }
 }
 
+/** 
+ * preview	-	preview the processing result
+ *
+ */
 void MainWindow::preview()
 {
-    type = adjustDialog->type;
-    elem = adjustDialog->elem;
-    size = adjustDialog->size;
-
-    if(type == 0){
-        erosion();
-    } else {
-        dilation();
-    }
+    processor->process(src, temp);
 
     showImage(temp);
 }
 
-void MainWindow::adjust()
+/** 
+ * process	-	process the image
+ * 
+ * Process the image by using the current processor.
+ * Be sure to select a processor by using setProcessor()
+ *
+ */
+void MainWindow::process()
 {
-    type = adjustDialog->type;
-    elem = adjustDialog->elem;
-    size = adjustDialog->size;
-
-    if(type == 0){
-        erosion();
-    } else {
-        dilation();
-    }
-
+    processor->process(src, temp);
     src = temp.clone();
     showImage(temp);
     isModified = true;
 }
 
+/** 
+ * reset	-	cancel the processing and reset the image
+ *
+ */
 void MainWindow::reset()
 {
     temp = src.clone();

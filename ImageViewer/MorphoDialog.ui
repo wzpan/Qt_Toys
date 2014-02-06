@@ -1,7 +1,7 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <ui version="4.0">
- <class>AdjustDialog</class>
- <widget class="QDialog" name="AdjustDialog">
+ <class>MorphoDialog</class>
+ <widget class="QDialog" name="MorphoDialog">
   <property name="geometry">
    <rect>
     <x>0</x>
@@ -17,7 +17,7 @@
    </sizepolicy>
   </property>
   <property name="windowTitle">
-   <string>Adjust Dialog</string>
+   <string>Morpho Dialog</string>
   </property>
   <layout class="QVBoxLayout" name="verticalLayout_2">
    <item>
@@ -101,7 +101,7 @@
         <item>
          <layout class="QHBoxLayout" name="horizontalLayout_3">
           <item>
-           <widget class="QLabel" name="label_3">
+           <widget class="QLabel" name="sizeLabel">
             <property name="text">
              <string>Kernel Size:</string>
             </property>
@@ -177,7 +177,7 @@
   <connection>
    <sender>okButton</sender>
    <signal>clicked()</signal>
-   <receiver>AdjustDialog</receiver>
+   <receiver>MorphoDialog</receiver>
    <slot>accept()</slot>
    <hints>
     <hint type="sourcelabel">
@@ -193,7 +193,7 @@
   <connection>
    <sender>cancelButton</sender>
    <signal>clicked()</signal>
-   <receiver>AdjustDialog</receiver>
+   <receiver>MorphoDialog</receiver>
    <slot>reject()</slot>
    <hints>
     <hint type="sourcelabel">

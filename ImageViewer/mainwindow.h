@@ -8,8 +8,9 @@
 #include <QPushButton>
 #include <QMessageBox>
 #include <QLabel>
-#include "adjustdialog.h"
-
+#include "MorphoDialog.h"
+#include "MorphoProcessor.h"
+#include "ImageProcessor.h"
 #include <opencv2/core/core.hpp>
 #include <opencv2/highgui/highgui.hpp>
 #include <opencv2/imgproc/imgproc.hpp>
@@ -34,8 +35,7 @@ public:
     bool saveAs();      // save as
     bool saveImage(const QString &fileName);     // save file
     bool loadImage(const QString &fileName);    // load file
-    void showImage(Mat img);        // display image on label control
-    void adjust();
+    void showImage(Mat img);        // display image
 
     // Help functions
     void about();
@@ -53,10 +53,14 @@ private slots:
     void on_actionSave_triggered();
 
     void on_actionAbout_triggered();
+
     void on_actionAbout_Qt_triggered();
-    void on_actionAdjust_triggered();
-    void reset();
-    void preview();
+
+    void on_actionMorpho_triggered();
+
+    void preview();		// preview image
+
+    void reset();    	// cancel processing
 
 protected:
     void closeEvent(QCloseEvent *event);    // Close event
@@ -64,9 +68,9 @@ protected:
     
 private:
     void updateStatus(bool vi);   // Update objects' visibility
-    void erosion();
-    void dilation();
-   
+    void setProcessor(ImageProcessor *imgProcessorPtr);		// Set current processor 
+    void process();  // Process image
+
     Ui::MainWindow *ui;
 
     QString emptyTip;   // tips when no image is opened
@@ -74,12 +78,12 @@ private:
     QString curFile;	// current file's location
     cv::Mat image, src, temp;			// the image variable
 
-    int type;       // adjust type. 0: erosion; 1: dilation
-    int elem;       // element type. 0: rect; 1. cross; 2. ellipse
-    int size;       // kernel size
+    // Processor basic class
+    ImageProcessor *processor;
 
-    // adjust dialog
-    AdjustDialog *adjustDialog;
+    // morphology
+    MorphoDialog *morphoDialog;
+    MorphoProcessor *morphoProcessor;
 
     int timer;			// timer
     QLabel *timeLabel;	// time label

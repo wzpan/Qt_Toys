@@ -1,21 +1,21 @@
-#ifndef ADJUSTDIALOG_H
-#define ADJUSTDIALOG_H
+#ifndef MORPHODIALOG_H
+#define MORPHODIALOG_H
 
 #include <QDialog>
+#include "MorphoProcessor.h"
 
 namespace Ui {
-class AdjustDialog;
+class MorphoDialog;
 }
 
-class AdjustDialog : public QDialog
+class MorphoDialog : public QDialog
 {
     Q_OBJECT
 
-    friend class MainWindow;
-
 public:
-    explicit AdjustDialog(QWidget *parent = 0);
-    ~AdjustDialog();
+    explicit MorphoDialog(QWidget *parent = 0,
+                          MorphoProcessor *processor = 0);
+    ~MorphoDialog();
 
 signals:
     void preview(); // preview image in real-time
@@ -25,17 +25,13 @@ private slots:
     void on_comboType_currentIndexChanged(int index);
     void on_comboElement_currentIndexChanged(int index);
     void on_sizeSlider_valueChanged(int value);
-
     void on_checkPreview_clicked();
 
 private:
-    Ui::AdjustDialog *ui;
+    Ui::MorphoDialog *ui;
+    MorphoProcessor *processor;
 
     bool showPreview;
-
-    int type;
-    int elem;
-    int size;
 };
 
-#endif // ADJUSTDIALOG_H
+#endif // MORPHODIALOG_H

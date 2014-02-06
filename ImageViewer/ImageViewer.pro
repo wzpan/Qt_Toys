@@ -13,13 +13,16 @@ TEMPLATE = app
 
 SOURCES += main.cpp\
         mainwindow.cpp \
-    adjustdialog.cpp
+    MorphoDialog.cpp \
+    MorphoProcessor.cpp
 
 HEADERS  += mainwindow.h \
-    adjustdialog.h
+    ImageProcessor.h \
+    MorphoDialog.h \
+    MorphoProcessor.h
 
 FORMS    += mainwindow.ui \
-    adjustdialog.ui
+    MorphoDialog.ui
 
 RESOURCES += \
     myResources.qrc

@@ -5,7 +5,6 @@
 int main(int argc, char *argv[])
 {
     QApplication a(argc, argv);
-    //QTextCodec::setCodecForLocale(QTextCodec::codecForLocale()); // if encoding problems occur
     MainWindow w;
     w.show();
 

@@ -6,8 +6,8 @@
    <rect>
     <x>0</x>
     <y>0</y>
-    <width>611</width>
-    <height>402</height>
+    <width>612</width>
+    <height>442</height>
    </rect>
   </property>
   <property name="windowTitle">
@@ -29,8 +29,8 @@
         <rect>
          <x>0</x>
          <y>0</y>
-         <width>591</width>
-         <height>304</height>
+         <width>592</width>
+         <height>344</height>
         </rect>
        </property>
        <layout class="QGridLayout" name="gridLayout_2">
@@ -55,7 +55,7 @@
     <rect>
      <x>0</x>
      <y>0</y>
-     <width>611</width>
+     <width>612</width>
      <height>17</height>
     </rect>
    </property>
@@ -75,7 +75,7 @@
     <property name="title">
      <string>Edit(&amp;E)</string>
     </property>
-    <addaction name="actionAdjust"/>
+    <addaction name="actionMorpho"/>
    </widget>
    <widget class="QMenu" name="menuHelp">
     <property name="title">
@@ -96,9 +96,8 @@
     <bool>false</bool>
    </attribute>
    <addaction name="actionOpen"/>
+   <addaction name="actionClose"/>
    <addaction name="actionSave"/>
-   <addaction name="separator"/>
-   <addaction name="actionAdjust"/>
    <addaction name="separator"/>
    <addaction name="actionQuit"/>
   </widget>
@@ -109,7 +108,7 @@
      <normaloff>:/myImages/actions/document-open.png</normaloff>:/myImages/actions/document-open.png</iconset>
    </property>
    <property name="text">
-    <string>Open(&amp;O)</string>
+    <string>&amp;Open</string>
    </property>
    <property name="shortcut">
     <string>Ctrl+O</string>
@@ -121,7 +120,7 @@
      <normaloff>:/myImages/actions/gtk-close.png</normaloff>:/myImages/actions/gtk-close.png</iconset>
    </property>
    <property name="text">
-    <string>Close(&amp;C)</string>
+    <string>&amp;Close</string>
    </property>
    <property name="shortcut">
     <string>Ctrl+W</string>
@@ -133,7 +132,7 @@
      <normaloff>:/myImages/actions/gtk-quit.png</normaloff>:/myImages/actions/gtk-quit.png</iconset>
    </property>
    <property name="text">
-    <string>Quit(&amp;Q)</string>
+    <string>&amp;Quit</string>
    </property>
    <property name="shortcut">
     <string>Ctrl+Q</string>
@@ -145,7 +144,7 @@
      <normaloff>:/myImages/actions/document-save.png</normaloff>:/myImages/actions/document-save.png</iconset>
    </property>
    <property name="text">
-    <string>Save(&amp;S)</string>
+    <string>&amp;Save</string>
    </property>
    <property name="shortcut">
     <string>Ctrl+S</string>
@@ -163,19 +162,15 @@
     <string>Ctrl+Shift+S</string>
    </property>
   </action>
-  <action name="actionAdjust">
-   <property name="icon">
-    <iconset resource="myResources.qrc">
-     <normaloff>:/myImages/actions/format-justify-center.png</normaloff>:/myImages/actions/format-justify-center.png</iconset>
-   </property>
+  <action name="actionMorpho">
    <property name="text">
-    <string>Adjust(&amp;A)</string>
+    <string>&amp;Morphology Transform</string>
    </property>
    <property name="toolTip">
-    <string>Adjust</string>
+    <string>Morphology</string>
    </property>
    <property name="shortcut">
-    <string>Ctrl+E</string>
+    <string>Ctrl+M</string>
    </property>
   </action>
   <action name="actionAbout">
@@ -184,7 +179,7 @@
      <normaloff>:/myImages/actions/gtk-about.png</normaloff>:/myImages/actions/gtk-about.png</iconset>
    </property>
    <property name="text">
-    <string>About(&amp;A)</string>
+    <string>&amp;About</string>
    </property>
    <property name="shortcut">
     <string>F1</string>
@@ -197,6 +192,11 @@
    </property>
    <property name="text">
     <string>About &amp;Qt</string>
+   </property>
+  </action>
+  <action name="actionNoise">
+   <property name="text">
+    <string>&amp;Noise</string>
    </property>
   </action>
  </widget>
