@@ -16,13 +16,9 @@ MainWindow::MainWindow(QWidget *parent) :
     rateLabel->setText("");
     ui->statusBar->addPermanentWidget(rateLabel);
 
-    // Erosion dialog
-    erosionDialog = 0;
-    erosion = 0;
-
-    // Dilation dialog
-    dilationDialog = 0;
-    dilation = 0;
+    // Morphology processor
+    morphologyDialog = 0;
+    morphologyProcessor = 0;
 
     updateStatus(false);
 
@@ -68,6 +64,16 @@ void MainWindow::updateStatus(bool vi)
         ui->progressSlider->setValue(0);
         rateLabel->setText("");
     }
+}
+
+void MainWindow::updateTimeLabel()
+{
+    QString curPos = QDateTime::fromMSecsSinceEpoch(
+                video->getPositionMS()).toString("hh:mm::ss");
+    QString length = QDateTime::fromMSecsSinceEpoch(
+                video->getLengthMS()).toString("hh:mm::ss");
+    ui->timeLabel->setText(tr("<span style=' color:#ff0000;'>"
+                              "%1</span> / %2").arg(curPos, length));
 }
 
 /** 
@@ -230,12 +236,7 @@ bool MainWindow::LoadFile(const QString &fileName)
     rateLabel->setText(tr("Frame rate: %1").arg(video->getFrameRate()));
 
     // update the time label
-    QString curPos = QDateTime::fromMSecsSinceEpoch(
-                video->getPositionMS()).toString("hh:mm::ss");
-    QString length = QDateTime::fromMSecsSinceEpoch(
-                video->getLengthMS()).toString("hh:mm::ss");
-    ui->timeLabel->setText(tr("<span style=' color:#ff0000;'>"
-                              "%1</span> / %2").arg(curPos, length));
+    updateTimeLabel();
 
     // set the current file location
     curFile = QFileInfo(fileName).canonicalPath();
@@ -319,12 +320,7 @@ void MainWindow::updateProgressBar()
                                  / video->getLength() * 1.0);
 
     // update the time label
-    QString curPos = QDateTime::fromMSecsSinceEpoch(
-                video->getPositionMS()).toString("hh:mm::ss");
-    QString length = QDateTime::fromMSecsSinceEpoch(
-                video->getLengthMS()).toString("hh:mm::ss");
-    ui->timeLabel->setText(tr("<span style=' color:#ff0000;'>"
-                              "%1</span> / %2").arg(curPos, length));
+    updateTimeLabel();
 }
 
 /**
@@ -443,6 +439,16 @@ void MainWindow::on_btnLast_clicked()
     video->prevFrame();
 }
 
+// slider moved
+void MainWindow::on_progressSlider_sliderMoved(int position)
+{
+    long pos = position * video->getLength() /
+            ui->progressSlider->maximum();
+    video->jumpTo(pos);
+
+    updateTimeLabel();
+}
+
 // Clean all the temp files
 void MainWindow::on_actionClean_Temp_Files_triggered()
 {
@@ -462,63 +468,23 @@ void MainWindow::on_actionClean_Temp_Files_triggered()
     }
 }
 
-// Change the progress by movinng slider
-void MainWindow::on_progressSlider_valueChanged(int value)
+void MainWindow::on_action_Morpho_triggered()
 {
-    long pos = value * video->getLength() /
-            ui->progressSlider->maximum();
-    video->jumpTo(pos);
+    if (!morphologyProcessor)
+        morphologyProcessor = new MorphologyProcessor();
 
-    QString curPos = QDateTime::fromMSecsSinceEpoch(
-                video->getPositionMS()).toString("hh:mm::ss");
-    QString length = QDateTime::fromMSecsSinceEpoch(
-                video->getLengthMS()).toString("hh:mm::ss");
-    ui->timeLabel->setText(tr("<span style=' color:#ff0000;'>"
-                              "%1</span> / %2").arg(curPos, length));
-}
-
-// erosion processor
-void MainWindow::on_action_Erosion_triggered()
-{
-    if (!erosion)
-        erosion = new ErosionProcessor();
-
-    // show erosion dialog
-    if (!erosionDialog) {
-        erosionDialog = new ErosionDialog(this, erosion);
+    // show morphology dialog
+    if (!morphologyDialog) {
+        morphologyDialog = new MorphologyDialog(this, morphologyProcessor);
     }
 
-    erosionDialog->show();
-    erosionDialog->raise();
-    erosionDialog->activateWindow();
+    morphologyDialog->show();
+    morphologyDialog->raise();
+    morphologyDialog->activateWindow();
 
-    if (erosionDialog->exec() == QDialog::Accepted){
-        // set erosion processor as the current frame processor
-        video->setFrameProcessor(erosion);
-        // do process
-        process();
-    }
-}
-
-
-// dilation processor
-void MainWindow::on_action_Dilation_triggered()
-{
-    if (!dilation)
-        dilation = new DilationProcessor();
-
-    // show dilation dialog
-    if (!dilationDialog) {
-        dilationDialog = new DilationDialog(this, dilation);
-    }
-
-    dilationDialog->show();
-    dilationDialog->raise();
-    dilationDialog->activateWindow();
-
-    if (dilationDialog->exec() == QDialog::Accepted){
-        // set dilation processor as the current frame processor
-        video->setFrameProcessor(dilation);
+    if (morphologyDialog->exec() == QDialog::Accepted) {
+        // set morphology processor as the current frame processor
+        video->setFrameProcessor(morphologyProcessor);
         // do process
         process();
     }

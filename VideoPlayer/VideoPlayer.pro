@@ -14,24 +14,19 @@ TEMPLATE = app
 SOURCES += main.cpp\
         mainwindow.cpp \
     VideoProcessor.cpp \
-    ErosionProcessor.cpp \
     WindowHelper.cpp \
-    ErosionDialog.cpp \
-    DilationDialog.cpp \
-    DilationProcessor.cpp
+    MorphologyDialog.cpp \
+    MorphologyProcessor.cpp
 
 HEADERS  += mainwindow.h \
-    ErosionProcessor.h \
     FrameProcessor.h \
     VideoProcessor.h \
     WindowHelper.h \
-    ErosionDialog.h \
-    DilationDialog.h \
-    DilationProcessor.h
+    MorphologyProcessor.h \
+    MorphologyDialog.h
 
 FORMS    += mainwindow.ui \
-    ErosionDialog.ui \
-    DilationDialog.ui
+    MorphologyDialog.ui
 
 RESOURCES += \
     myResources.qrc

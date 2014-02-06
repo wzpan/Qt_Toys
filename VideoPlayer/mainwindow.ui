@@ -176,8 +176,7 @@
     <property name="title">
      <string>Processor(&amp;F)</string>
     </property>
-    <addaction name="action_Erosion"/>
-    <addaction name="action_Dilation"/>
+    <addaction name="action_Morpho"/>
    </widget>
    <widget class="QMenu" name="menuHelp">
     <property name="title">
@@ -344,9 +343,9 @@
     <string>Pause</string>
    </property>
   </action>
-  <action name="action_Erosion">
+  <action name="action_Morpho">
    <property name="text">
-    <string>&amp;Erosion</string>
+    <string>&amp;Morphology Transform</string>
    </property>
   </action>
   <action name="actionClean_Temp_Files">
@@ -356,11 +355,6 @@
    </property>
    <property name="text">
     <string>Clean Temp Files</string>
-   </property>
-  </action>
-  <action name="action_Dilation">
-   <property name="text">
-    <string>&amp;Dilation</string>
    </property>
   </action>
  </widget>

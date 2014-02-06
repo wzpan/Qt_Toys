@@ -11,10 +11,8 @@
 #include <QLabel>
 #include <queue>
 #include "VideoProcessor.h"
-#include "ErosionDialog.h"
-#include "ErosionProcessor.h"
-#include "DilationDialog.h"
-#include "DilationProcessor.h"
+#include "MorphologyDialog.h"
+#include "MorphologyProcessor.h"
 #include "WindowHelper.h"
 #include <opencv2/core/core.hpp>
 #include <opencv2/imgproc/imgproc.hpp>
@@ -76,11 +74,7 @@ private slots:
 
     void on_btnLast_clicked();  
 
-    void on_action_Erosion_triggered();
-
     void on_actionClean_Temp_Files_triggered();
-
-    void on_progressSlider_valueChanged(int value);
 
     void showFrame(cv::Mat frame);      // show a frame
 
@@ -92,7 +86,9 @@ private slots:
 
     void updateProgressBar();           // update progress bar
 
-    void on_action_Dilation_triggered();
+    void on_progressSlider_sliderMoved(int position);
+
+    void on_action_Morpho_triggered();
 
 protected:
     void closeEvent(QCloseEvent *);
@@ -100,17 +96,13 @@ protected:
 private:
     Ui::MainWindow *ui;
 
-    // Erosion dialog
-    ErosionDialog *erosionDialog;
-    // Erosion processor
-    ErosionProcessor *erosion;
-
-    // Dilation dialog
-    DilationDialog *dilationDialog;
-    // Erosion processor
-    DilationProcessor *dilation;
+    // Morphology dialog
+    MorphologyDialog *morphologyDialog;
+    // Morphology processor
+    MorphologyProcessor *morphologyProcessor;
 
     void updateStatus(bool vi);
+    void updateTimeLabel();
 
     // tips when no image is opened
     QString inputTip;

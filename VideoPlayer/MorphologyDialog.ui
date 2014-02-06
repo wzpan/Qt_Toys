@@ -1,7 +1,7 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <ui version="4.0">
- <class>ErosionDialog</class>
- <widget class="QDialog" name="ErosionDialog">
+ <class>MorphologyDialog</class>
+ <widget class="QDialog" name="MorphologyDialog">
   <property name="geometry">
    <rect>
     <x>0</x>
@@ -10,22 +10,41 @@
     <height>212</height>
    </rect>
   </property>
-  <property name="sizePolicy">
-   <sizepolicy hsizetype="Preferred" vsizetype="MinimumExpanding">
-    <horstretch>0</horstretch>
-    <verstretch>0</verstretch>
-   </sizepolicy>
-  </property>
   <property name="windowTitle">
-   <string>Erosion Dialog</string>
+   <string>Morphology Dialog</string>
   </property>
-  <layout class="QVBoxLayout" name="verticalLayout_2">
-   <item>
+  <layout class="QGridLayout" name="gridLayout_2">
+   <item row="0" column="0">
     <layout class="QVBoxLayout" name="verticalLayout">
      <item>
       <widget class="QWidget" name="widget" native="true">
-       <layout class="QGridLayout" name="gridLayout">
-        <item row="0" column="0">
+       <layout class="QVBoxLayout" name="verticalLayout_2">
+        <item>
+         <layout class="QHBoxLayout" name="horizontalLayout">
+          <item>
+           <widget class="QLabel" name="label">
+            <property name="text">
+             <string>Type</string>
+            </property>
+           </widget>
+          </item>
+          <item>
+           <widget class="QComboBox" name="comboType">
+            <item>
+             <property name="text">
+              <string>Erosion</string>
+             </property>
+            </item>
+            <item>
+             <property name="text">
+              <string>Morphology</string>
+             </property>
+            </item>
+           </widget>
+          </item>
+         </layout>
+        </item>
+        <item>
          <layout class="QHBoxLayout" name="horizontalLayout_2">
           <item>
            <widget class="QLabel" name="label_2">
@@ -67,7 +86,7 @@
           </item>
          </layout>
         </item>
-        <item row="1" column="0">
+        <item>
          <layout class="QHBoxLayout" name="horizontalLayout_3">
           <item>
            <widget class="QLabel" name="sizeLabel">
@@ -108,7 +127,7 @@
      </item>
     </layout>
    </item>
-   <item>
+   <item row="1" column="0">
     <widget class="QWidget" name="buttonWidget" native="true">
      <property name="sizePolicy">
       <sizepolicy hsizetype="Preferred" vsizetype="Fixed">
@@ -152,43 +171,37 @@
    </item>
   </layout>
  </widget>
- <tabstops>
-  <tabstop>comboElement</tabstop>
-  <tabstop>sizeSlider</tabstop>
-  <tabstop>okButton</tabstop>
-  <tabstop>cancelButton</tabstop>
- </tabstops>
  <resources/>
  <connections>
   <connection>
    <sender>okButton</sender>
    <signal>clicked()</signal>
-   <receiver>ErosionDialog</receiver>
+   <receiver>MorphologyDialog</receiver>
    <slot>accept()</slot>
    <hints>
     <hint type="sourcelabel">
-     <x>338</x>
-     <y>175</y>
+     <x>361</x>
+     <y>186</y>
     </hint>
     <hint type="destinationlabel">
-     <x>407</x>
-     <y>159</y>
+     <x>402</x>
+     <y>133</y>
     </hint>
    </hints>
   </connection>
   <connection>
    <sender>cancelButton</sender>
    <signal>clicked()</signal>
-   <receiver>ErosionDialog</receiver>
+   <receiver>MorphologyDialog</receiver>
    <slot>reject()</slot>
    <hints>
     <hint type="sourcelabel">
-     <x>261</x>
-     <y>184</y>
+     <x>262</x>
+     <y>186</y>
     </hint>
     <hint type="destinationlabel">
-     <x>400</x>
-     <y>104</y>
+     <x>177</x>
+     <y>208</y>
     </hint>
    </hints>
   </connection>
