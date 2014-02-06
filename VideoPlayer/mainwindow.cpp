@@ -20,6 +20,10 @@ MainWindow::MainWindow(QWidget *parent) :
     erosionDialog = 0;
     erosion = 0;
 
+    // Dilation dialog
+    dilationDialog = 0;
+    dilation = 0;
+
     updateStatus(false);
 
     video = new VideoProcessor;
@@ -439,35 +443,6 @@ void MainWindow::on_btnLast_clicked()
     video->prevFrame();
 }
 
-// erosion processor
-void MainWindow::on_action_Erosion_triggered()
-{
-    // show erosion dialog
-    if (!erosionDialog) {
-        erosionDialog = new ErosionDialog(this);
-    }
-
-    erosionDialog->show();
-    erosionDialog->raise();
-    erosionDialog->activateWindow();
-
-    if (erosionDialog->exec() == QDialog::Accepted){
-        // initialize erosion processor
-        if (!erosion)
-            erosion = new ErosionProcessor();
-        // get neccessarry parameters
-        int size = erosionDialog->getSize();	
-        int elem = erosionDialog->getElem();
-        // set parameters
-        erosion->setSize(size);
-        erosion->setElem(elem);
-        // set erosion processor as the current frame processor
-        video->setFrameProcessor(erosion);
-        // do process
-        process();
-    }
-}
-
 // Clean all the temp files
 void MainWindow::on_actionClean_Temp_Files_triggered()
 {
@@ -500,4 +475,51 @@ void MainWindow::on_progressSlider_valueChanged(int value)
                 video->getLengthMS()).toString("hh:mm::ss");
     ui->timeLabel->setText(tr("<span style=' color:#ff0000;'>"
                               "%1</span> / %2").arg(curPos, length));
+}
+
+// erosion processor
+void MainWindow::on_action_Erosion_triggered()
+{
+    if (!erosion)
+        erosion = new ErosionProcessor();
+
+    // show erosion dialog
+    if (!erosionDialog) {
+        erosionDialog = new ErosionDialog(this, erosion);
+    }
+
+    erosionDialog->show();
+    erosionDialog->raise();
+    erosionDialog->activateWindow();
+
+    if (erosionDialog->exec() == QDialog::Accepted){
+        // set erosion processor as the current frame processor
+        video->setFrameProcessor(erosion);
+        // do process
+        process();
+    }
+}
+
+
+// dilation processor
+void MainWindow::on_action_Dilation_triggered()
+{
+    if (!dilation)
+        dilation = new DilationProcessor();
+
+    // show dilation dialog
+    if (!dilationDialog) {
+        dilationDialog = new DilationDialog(this, dilation);
+    }
+
+    dilationDialog->show();
+    dilationDialog->raise();
+    dilationDialog->activateWindow();
+
+    if (dilationDialog->exec() == QDialog::Accepted){
+        // set dilation processor as the current frame processor
+        video->setFrameProcessor(dilation);
+        // do process
+        process();
+    }
 }

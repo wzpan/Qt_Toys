@@ -1,15 +1,14 @@
-#ifndef EROSIONPROCESSOR_H
-#define EROSIONPROCESSOR_H
+#ifndef DILATIONPROCESSOR_H
+#define DILATIONPROCESSOR_H
 
 #include "FrameProcessor.h"
 
-// The canny processor class
-class ErosionProcessor : public FrameProcessor
+class DilationProcessor : public FrameProcessor
 {
-    friend class ErosionDialog;
+    friend class DilationDialog;
 
 public:
-    ErosionProcessor();
+    DilationProcessor();
 
     // erosion processing method
     void process(cv::Mat &img, cv::Mat &out);
@@ -24,4 +23,4 @@ private:
     int size;
 };
 
-#endif // EROSIONPROCESSOR_H
+#endif // DILATIONPROCESSOR_H

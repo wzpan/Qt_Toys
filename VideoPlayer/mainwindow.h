@@ -10,9 +10,11 @@
 #include <QMessageBox>
 #include <QLabel>
 #include <queue>
-#include "ErosionDialog.h"
 #include "VideoProcessor.h"
+#include "ErosionDialog.h"
 #include "ErosionProcessor.h"
+#include "DilationDialog.h"
+#include "DilationProcessor.h"
 #include "WindowHelper.h"
 #include <opencv2/core/core.hpp>
 #include <opencv2/imgproc/imgproc.hpp>
@@ -90,6 +92,8 @@ private slots:
 
     void updateProgressBar();           // update progress bar
 
+    void on_action_Dilation_triggered();
+
 protected:
     void closeEvent(QCloseEvent *);
     
@@ -100,6 +104,11 @@ private:
     ErosionDialog *erosionDialog;
     // Erosion processor
     ErosionProcessor *erosion;
+
+    // Dilation dialog
+    DilationDialog *dilationDialog;
+    // Erosion processor
+    DilationProcessor *dilation;
 
     void updateStatus(bool vi);
 

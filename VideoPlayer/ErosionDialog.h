@@ -13,7 +13,8 @@ class ErosionDialog : public QDialog
     Q_OBJECT
 
 public:
-    explicit ErosionDialog(QWidget *parent = 0);
+    explicit ErosionDialog(QWidget *parent = 0,
+                           ErosionProcessor *processor = 0);
     ~ErosionDialog();
     int getSize();
     int getElem();
@@ -30,9 +31,7 @@ signals:
 
 private:
     Ui::ErosionDialog *ui;
-
-    int elem;
-    int size;
+    ErosionProcessor *processor;
 };
 
 #endif // EROSIONDIALOG_H

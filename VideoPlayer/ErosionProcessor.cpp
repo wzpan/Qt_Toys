@@ -2,8 +2,8 @@
 
 ErosionProcessor::ErosionProcessor()
 {
-    size = 0;
     elem = 0;
+    size = 3;
 }
 
 /** 

@@ -16,17 +16,22 @@ SOURCES += main.cpp\
     VideoProcessor.cpp \
     ErosionProcessor.cpp \
     WindowHelper.cpp \
-    ErosionDialog.cpp
+    ErosionDialog.cpp \
+    DilationDialog.cpp \
+    DilationProcessor.cpp
 
 HEADERS  += mainwindow.h \
     ErosionProcessor.h \
     FrameProcessor.h \
     VideoProcessor.h \
     WindowHelper.h \
-    ErosionDialog.h
+    ErosionDialog.h \
+    DilationDialog.h \
+    DilationProcessor.h
 
 FORMS    += mainwindow.ui \
-    ErosionDialog.ui
+    ErosionDialog.ui \
+    DilationDialog.ui
 
 RESOURCES += \
     myResources.qrc

@@ -1,17 +1,15 @@
 #include "ErosionDialog.h"
 #include "ui_ErosionDialog.h"
 
-ErosionDialog::ErosionDialog(QWidget *parent) :
+ErosionDialog::ErosionDialog(QWidget *parent, ErosionProcessor *processor) :
     QDialog(parent),
     ui(new Ui::ErosionDialog)
 {
+    this->processor = processor;
     ui->setupUi(this);
 
-    elem = 0;
-    size = 3;
-
-    ui->comboElement->setCurrentIndex(elem);
-    ui->sizeSlider->setValue(size);
+    ui->comboElement->setCurrentIndex(processor->elem);
+    ui->sizeSlider->setValue(processor->size);
 }
 
 ErosionDialog::~ErosionDialog()
@@ -21,38 +19,12 @@ ErosionDialog::~ErosionDialog()
 
 void ErosionDialog::on_comboElement_currentIndexChanged(int index)
 {
-    elem = index;
+    processor->elem = index;
 }
 
 void ErosionDialog::on_sizeSlider_valueChanged(int value)
 {
+    processor->size = value;
     ui->sizeLabel->setText(tr("<p>Kernel Size:</p>"
                               "<p><b>%1</b></p>").arg(value));
-}
-
-
-int ErosionDialog::getSize()
-{
-    return size;
-}
-
-int ErosionDialog::getElem()
-{
-    return elem;
-}
-
-void ErosionDialog::setSize(int s)
-{
-    size = s;
-}
-
-void ErosionDialog::setElem(int e)
-{
-    elem = e;
-}
-
-void ErosionDialog::setParam(int s, int e)
-{
-    setSize(s);
-    setElem(e);
 }
