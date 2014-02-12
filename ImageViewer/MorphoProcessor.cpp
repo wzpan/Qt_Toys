@@ -10,19 +10,21 @@ MorphoProcessor::MorphoProcessor()
 /**
  * process	-	Morphology processing method
  *
- * @param img	-	the input image
- * @param out	-	the output image
+ * @param image	-	the input image
+ * @param result	-	the output image
  */
-void MorphoProcessor :: process(cv::Mat &img, cv::Mat &out)
+void MorphoProcessor :: process(cv::Mat &image, cv::Mat &result)
 {
+    // allocate if neccessary
+    result.create(image.size(), image.type());
     cv::Mat element = cv::getStructuringElement( 0,
                                              cv::Size( 2*size + 1, 2*size+1 ),
                                              cv::Point( size, size ) );
     // Apply the Morphology operation
     if (0 == type)
-        cv::erode( img, out, element );
+        cv::erode( image, result, element );
     else
-        cv::dilate( img, out, element);
+        cv::dilate( image, result, element);
 }
 
 int MorphoProcessor::getType()

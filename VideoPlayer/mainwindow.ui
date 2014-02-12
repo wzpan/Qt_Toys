@@ -23,6 +23,9 @@
    <layout class="QGridLayout" name="gridLayout">
     <item row="0" column="0">
      <widget class="QScrollArea" name="scrollArea">
+      <property name="styleSheet">
+       <string notr="true">background-color: qlineargradient(spread:pad, x1:0.489, y1:0, x2:0.5, y2:0.994318, stop:0 rgba(204, 204, 204, 255), stop:1 rgba(102, 102, 102, 255));</string>
+      </property>
       <property name="widgetResizable">
        <bool>true</bool>
       </property>

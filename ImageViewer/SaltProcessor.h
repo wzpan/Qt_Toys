@@ -9,7 +9,7 @@ class SaltProcessor : public ImageProcessor
 public:
     SaltProcessor();
 
-    void process(cv::Mat &img, cv::Mat &out);
+    void process(cv::Mat &, cv::Mat &);
 
     int getNum();
     void setNum(int);

@@ -21,6 +21,9 @@
    <layout class="QGridLayout" name="gridLayout">
     <item row="0" column="0">
      <widget class="QScrollArea" name="scrollArea">
+      <property name="styleSheet">
+       <string notr="true">background-color: rgb(168, 168, 168)</string>
+      </property>
       <property name="widgetResizable">
        <bool>true</bool>
       </property>
@@ -36,6 +39,9 @@
        <layout class="QGridLayout" name="gridLayout_2">
         <item row="0" column="0">
          <widget class="QLabel" name="imageLabel">
+          <property name="autoFillBackground">
+           <bool>false</bool>
+          </property>
           <property name="text">
            <string>Please open an image.</string>
           </property>
@@ -75,6 +81,14 @@
     <property name="title">
      <string>Edit(&amp;E)</string>
     </property>
+    <widget class="QMenu" name="menuColor_Transform">
+     <property name="title">
+      <string>Color Transform</string>
+     </property>
+     <addaction name="actionGray_Scale"/>
+    </widget>
+    <addaction name="menuColor_Transform"/>
+    <addaction name="separator"/>
     <addaction name="actionMorpho"/>
     <addaction name="actionSalt_Pepper_Noise"/>
    </widget>
@@ -165,7 +179,7 @@
   </action>
   <action name="actionMorpho">
    <property name="text">
-    <string>&amp;Morphology Transform</string>
+    <string>&amp;Morphology Transform...</string>
    </property>
    <property name="toolTip">
     <string>Morphology</string>
@@ -197,7 +211,15 @@
   </action>
   <action name="actionSalt_Pepper_Noise">
    <property name="text">
-    <string>Salt and Pepper &amp;Noise</string>
+    <string>Salt and Pepper &amp;Noise...</string>
+   </property>
+   <property name="shortcut">
+    <string>Ctrl+N</string>
+   </property>
+  </action>
+  <action name="actionGray_Scale">
+   <property name="text">
+    <string>&amp;Gray Scale</string>
    </property>
   </action>
  </widget>

@@ -5,20 +5,20 @@ SaltProcessor::SaltProcessor()
     num = 100;
 }
 
-void SaltProcessor::process(cv::Mat &img, cv::Mat &out)
+void SaltProcessor::process(cv::Mat &image, cv::Mat &result)
 {
-    out = img.clone();
+    result = image.clone();
     for (int k=0; k<num; k++) {
         // qrand is a Qt random number generator
-        int i = rand() % out.cols;
-        int j = rand() % out.rows;
+        int i = rand() % result.cols;
+        int j = rand() % result.rows;
 
-        if (1 == out.channels()) {  // gray-level image
-            out.at<uchar>(j,i) = 255;
-        } else if (3 == out.channels()) {  // color image
-            out.at<cv::Vec3b>(j,i)[0] = 255;
-            out.at<cv::Vec3b>(j,i)[1] = 255;
-            out.at<cv::Vec3b>(j,i)[2] = 255;
+        if (1 == result.channels()) {  // gray-level image
+            result.at<uchar>(j,i) = 255;
+        } else if (3 == result.channels()) {  // color image
+            result.at<cv::Vec3b>(j,i)[0] = 255;
+            result.at<cv::Vec3b>(j,i)[1] = 255;
+            result.at<cv::Vec3b>(j,i)[2] = 255;
         }
     }
 }

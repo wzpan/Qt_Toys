@@ -21,8 +21,6 @@ namespace Ui {
     class MainWindow;
 }
 
-using namespace cv;
-
 class MainWindow : public QMainWindow
 {
     Q_OBJECT
@@ -37,7 +35,7 @@ public:
     bool saveAs();      // save as
     bool saveImage(const QString &fileName);     // save file
     bool loadImage(const QString &fileName);    // load file
-    void showImage(Mat img);        // display image
+    void showImage(cv::Mat img);        // display image
 
     // Help functions
     void about();
@@ -66,12 +64,17 @@ private slots:
 
     void on_actionSalt_Pepper_Noise_triggered();
 
+    void on_actionGray_Scale_triggered();
+
 protected:
     void closeEvent(QCloseEvent *event);    // Close event
     
 private:
     void updateStatus(bool vi);   // Update objects' visibility
-    void setProcessor(ImageProcessor *imgProcessorPtr);		// Set current processor 
+    // set the instance of the class that implements the ImageProcessor interface
+    void setProcessor(ImageProcessor *imgProcessorPtr);
+    // set the callback function that will be called for processing the image
+    void setProcessor(void (*imgProcessingCallback)(cv::Mat &, cv::Mat &));
     void process();  // Process image
 
     Ui::MainWindow *ui;
@@ -79,10 +82,13 @@ private:
     QString emptyTip;   // tips when no image is opened
     bool isModified;   // whether the file has been modified
     QString curFile;	// current file's location
-    cv::Mat image, src, temp;			// the image variable
+    cv::Mat src, temp;			// the image variable
 
     // Processor basic class
-    ImageProcessor *processor;
+    ImageProcessor *imgProcessor;
+    // the callback function to be called
+    // for processing the image
+    void (*processImg)(cv::Mat&, cv::Mat&);
 
     // morphology
     MorphoDialog *morphoDialog;

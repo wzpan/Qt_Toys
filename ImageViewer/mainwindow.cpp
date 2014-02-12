@@ -10,7 +10,8 @@ MainWindow::MainWindow(QWidget *parent) :
     updateStatus(false);
 
     // basic image processor
-    processor = 0;
+    imgProcessor = 0;
+    processImg = 0;
 
     // morphology dialog
     morphoDialog = 0;    
@@ -54,10 +55,23 @@ void MainWindow::updateStatus(bool vi)
     ui->actionSave_as->setEnabled(vi);
 }
 
+
 void MainWindow::setProcessor(ImageProcessor *imgProcessorPtr)
 {
-    // this is the frame processor instance that will be called
-    processor = imgProcessorPtr;
+    // invalidate callback function
+    processImg = 0;
+    // this is the image processor instance that will be called
+    imgProcessor = imgProcessorPtr;
+}
+
+
+void MainWindow::setProcessor(void (*imgProcessingCallback)(cv::Mat &, cv::Mat &))
+{
+    // invalidate image processor class instance
+    imgProcessor = 0;
+    // this is the image processing function that will be called
+    processImg = imgProcessingCallback;
+
 }
 
 /** 
@@ -144,6 +158,8 @@ bool MainWindow::saveImage(const QString &fileName)
     QString target;
     if (QFileInfo(fileName).suffix() == "")
         target = fileName + ".png";
+    else
+        target = fileName;
     QFile file(target);
 
     if (!file.open(QFile::WriteOnly)) {
@@ -193,7 +209,7 @@ bool MainWindow::loadImage(const QString &fileName)
     QApplication::setOverrideCursor(Qt::WaitCursor);
     
     // Load all the contents to the label
-    src = imread(fileName.toStdString());
+    src = cv::imread(fileName.toStdString());
     temp = src.clone();
 
     // Display image
@@ -215,13 +231,19 @@ bool MainWindow::loadImage(const QString &fileName)
     return true;
 }
 
-void MainWindow::showImage(Mat image)
+void MainWindow::showImage(cv::Mat image)
 {
-    Mat tmp;
-    cvtColor(image, tmp, CV_BGR2RGB);
-    QImage img = QImage((const unsigned char*)(tmp.data),
+    cv::Mat tmp;
+    QImage img;
+    if (image.channels() == 3) {    // color image
+        cv::cvtColor(image, tmp, CV_BGR2RGB);
+        img = QImage((const unsigned char*)(tmp.data),
                         tmp.cols, tmp.rows, QImage::Format_RGB888);
-
+    } else if (image.channels() == 1) {     // gray scale image
+        cv::cvtColor(image, tmp, CV_GRAY2RGB);
+        img = QImage((const unsigned char*)(tmp.data),
+                        tmp.cols, tmp.rows, QImage::Format_RGB888);
+    }
     // display on label
     ui->imageLabel->setPixmap(QPixmap::fromImage(img));
     ui->imageLabel->repaint();
@@ -305,7 +327,11 @@ void MainWindow::on_actionAbout_Qt_triggered()
  */
 void MainWindow::preview()
 {
-    processor->process(src, temp);
+    if (imgProcessor){
+        imgProcessor->process(src, temp);
+    } else if (processImg) {
+        processImg(src, temp);
+    }
 
     showImage(temp);
 }
@@ -319,8 +345,11 @@ void MainWindow::preview()
  */
 void MainWindow::process()
 {
-    processor->process(src, temp);
-    src = temp.clone();
+    if (imgProcessor){
+        imgProcessor->process(src, temp);
+    } else if (processImg) {
+        processImg(src, temp);
+    }
     showImage(temp);
     isModified = true;
 }
@@ -397,4 +426,17 @@ void MainWindow::on_actionSalt_Pepper_Noise_triggered()
     } else {
         reset();
     }
+}
+
+void toGray(cv::Mat &image, cv::Mat &result)
+{
+    if (image.channels() == 3)
+        cv::cvtColor(image, result, CV_BGR2GRAY);
+}
+
+void MainWindow::on_actionGray_Scale_triggered()
+{
+    // set toGray function as the callback image processor function
+    setProcessor(toGray);
+    process();
 }
