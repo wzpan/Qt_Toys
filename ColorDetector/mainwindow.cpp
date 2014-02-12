@@ -15,6 +15,11 @@ MainWindow::~MainWindow()
     delete ui;
 }
 
+void MainWindow::closeEvent(QCloseEvent *)
+{
+    onClose();
+}
+
 
 void MainWindow::on_openBtn_clicked()
 {
@@ -35,6 +40,12 @@ void MainWindow::on_colorBtn_clicked()
 void MainWindow::on_thresholdSlider_sliderReleased()
 {
     onSelectThreshold();
+}
+
+void MainWindow::on_thresholdSlider_valueChanged(int value)
+{
+    ui->thresholdLabel->setText(tr("Color Distance Threshold: %1")
+                                .arg(value));
 }
 
 void MainWindow::on_saveBtn_clicked()
@@ -119,8 +130,6 @@ void MainWindow::onSelectColor()
  */
 void MainWindow::onSelectThreshold()
 {
-    ui->thresholdLabel->setText(tr("Color Distance Threshold: %1")
-                                .arg(ui->thresholdSlider->value()));
     ColorDetectController::getInstance()
             ->setColorDistanceThreshold(
                 ui->thresholdSlider->value());
@@ -180,4 +189,13 @@ void MainWindow::onSave()
                                                     curFile);
     if (!fileName.isEmpty())
         saveImage(fileName);
+}
+
+/** 
+ * onClose	-	destroy the instance
+ *
+ */
+void MainWindow::onClose()
+{
+    ColorDetectController::getInstance()->destroy();
 }
