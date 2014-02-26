@@ -37,7 +37,7 @@
             </item>
             <item>
              <property name="text">
-              <string>Morphology</string>
+              <string>Dilation</string>
              </property>
             </item>
            </widget>

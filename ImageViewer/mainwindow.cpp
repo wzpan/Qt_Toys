@@ -246,6 +246,7 @@ void MainWindow::showImage(cv::Mat image)
     }
     // display on label
     ui->imageLabel->setPixmap(QPixmap::fromImage(img));
+    ui->imageLabel->resize(ui->imageLabel->pixmap()->size());
     ui->imageLabel->repaint();
 }
 
