@@ -65,11 +65,11 @@ void MainWindow::showImage(cv::Mat image)
     if (image.channels() == 3) {    // color image
         cv::cvtColor(image, tmp, CV_BGR2RGB);
         img = QImage((const unsigned char*)(tmp.data),
-                        tmp.cols, tmp.rows, QImage::Format_RGB888);
+                     tmp.cols, tmp.rows, tmp.step, QImage::Format_RGB888);
     } else if (image.channels() == 1) {     // gray scale image
         cv::cvtColor(image, tmp, CV_GRAY2RGB);
         img = QImage((const unsigned char*)(tmp.data),
-                        tmp.cols, tmp.rows, QImage::Format_RGB888);
+                     tmp.cols, tmp.rows, tmp.step, QImage::Format_RGB888);
     }
     // display on label
     ui->imageLabel->setPixmap(QPixmap::fromImage(img));
@@ -199,3 +199,4 @@ void MainWindow::onClose()
 {
     ColorDetectController::getInstance()->destroy();
 }
+

@@ -106,6 +106,7 @@ cv::Mat ColorDetector::process(const cv::Mat &image) {
     converted.create(image.rows,image.cols,image.type());
     // Converting to Lab color space
     cv::cvtColor(image, converted, CV_BGR2Lab);
+    //converted = image;
     
     // get the iterators
     cv::Mat_<cv::Vec3b>::const_iterator it =

@@ -270,7 +270,7 @@ void MainWindow::showFrame(cv::Mat frame)
     cv::Mat tmp;
     cvtColor(frame, tmp, CV_BGR2RGB);
     QImage img = QImage((const unsigned char*)(tmp.data),
-                        tmp.cols, tmp.rows, QImage::Format_RGB888);
+                        tmp.cols, tmp.rows, tmp.step, QImage::Format_RGB888);
 
     ui->videoLabel->setPixmap(QPixmap::fromImage(img));
     ui->videoLabel->repaint();
